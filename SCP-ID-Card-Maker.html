@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCP ID Card Generator</title>
+
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪪</text></svg>">
+
+  <style>
+    a,
+    label,
+    input,
+    button,
+    textarea,
+    #form-group,
+    .hint {
+      font-family: Verdana, Arial, sans-serif;
+      font-weight: normal;
+    }
+
+    button,
+    input[type=radio],
+    input[type=file],
+    input[type=range] {
+      cursor: pointer;
+    }
+
+    #header {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    #toggle-language {
+      width: fit-content;
+    }
+
+    #form-group {
+      margin: 20px 0;
+    }
+
+    #content-wrap {
+      display: flex;
+      justify-content: space-evenly;
+      gap: 5vw;
+      padding: 2em;
+    }
+
+
+
+    .large-area {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      margin: 1em 0;
+    }
+
+    .large-area textarea {
+      font-size: 1.1em;
+      padding: 0.5rem 0.7rem;
+    }
+
+    .small-area {
+      margin: 0.6em 0;
+    }
+
+    .small-area input:not([type=color]) {
+      padding: 0.5rem;
+    }
+
+    input[type=color] {
+      width: 4em;
+      height: 4em;
+      border: none;
+      background: none;
+    }
+
+    .upload-area {
+      border: 1px solid gray;
+      padding: 1em;
+      border-radius: 1em;
+    }
+
+    .hint {
+      color: gray;
+    }
+
+    #hint-process {
+      text-align: center;
+      color: gray;
+      margin-bottom: 1em;
+    }
+
+
+
+
+    #button-area {
+      margin: 0 auto;
+      width: fit-content;
+    }
+
+    #button-area button {
+      padding: 0.5em 0.8em;
+    }
+
+    #slider-area {
+      margin: 1em auto 2em 1em;
+      width: fit-content;
+    }
+
+    #slider-wrap-2 {
+      margin: 2em auto;
+      width: fit-content;
+    }
+
+    #advanced-area {
+      margin: 2em auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+
+    #hint-width {
+      text-align: center;
+      font-size: 0.9rem;
+      color: gray;
+      margin: 1em auto;
+      max-width: 350px;
+    }
+
+    #preview-wrap {
+      padding-left: 5vw;
+      border-left: 2px dashed gray;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #preview {
+      align-self: center;
+    }
+
+    @media only screen and (max-width: 600px) {
+
+      #content-wrap {
+        flex-direction: column;
+        padding: 1em;
+      }
+
+      #preview-wrap {
+        border-left: none;
+        border-top: 2px dashed gray;
+      }
+
+    }
+  </style>
+
+  <style>
+    /* Lato Black 字体 */
+    @import url('https://fonts.googleapis.com/css2?family=Lato:wght@900&display=swap');
+
+    /* 思源黑体（简体中文、繁体中文、日文） */
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@900&family=Noto+Sans+TC:wght@900&family=Noto+Sans+JP:wght@900&display=swap');
+
+    /* Libre Barcode 39 条码字体 */
+    @import url('https://fonts.googleapis.com/css2?family=Libre+Barcode+39&display=swap');
+
+    /* 全局设置 */
+    :root {
+      --v-id-card-width: calc(150px + 15vw);
+      --v-id-card-radius: calc(var(--v-id-card-width) * 0.05);
+      --v-id-card-padding: calc(var(--v-id-card-width) * 0.045);
+
+      --v-id-card-logo: url("data:image/svg+xml,%3Csvg id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 1000 1000' style='enable-background:new 0 0 1000 1000;' xml:space='preserve'%3E%3Cstyle type='text/css'%3E .st0%7Bfill:none;stroke:%23000000;stroke-width:25;stroke-miterlimit:10;%7D .st1%7Bfill:none;stroke:%23000000;stroke-width:50;stroke-miterlimit:10;%7D%3C/style%3E%3Cg%3E%3Cg%3E%3Cpath id='b' d='M483.9,210.7v175.1h-35.8l51.4,99.7l51.4-99.7h-35.8V210.7'/%3E%3Cpath id='b_00000000941905411399518890000010819796052927638431_' d='M757.1,630.9l-151.7-87.3l18.2-31.2l-111.7-5.2l60.8,94 l18.2-31.2l151.7,87.3'/%3E%3Cpath id='b_00000064353359574372273160000016056402681424585617_' d='M256.9,657.4l151.7-87.3l18.2,31.2l60.8-94l-111.7,5.2 l18.2,31.2L242.4,631'/%3E%3C/g%3E%3Cpath class='st0' d='M873.5,556.6c2.6-18.7,4.2-37.4,4.2-57.1c0-160.5-99.7-297.1-240.5-352.2l-13.5-69.6H375.3l-13.5,69.6 c-140.8,55-240.5,192.2-240.5,352.2c0,19.2,1.6,38.4,4.2,57.1L72,603.4l124.2,215.1l67.5-23.4c64.9,51.9,147,82.6,236.4,82.6 s171.4-31.2,236.4-82.6l67.5,23.4l124.2-215.1L873.5,556.6z'/%3E%3Ccircle class='st1' cx='499.5' cy='500' r='227'/%3E%3C/g%3E%3C/svg%3E");
+      --v-id-card-custom-logo: var(--v-id-card-logo);
+      --v-id-card-bg-color: rgb(255, 255, 255);
+      --v-id-card-text-color: rgb(0, 0, 0);
+      --v-id-card-secondary-color: rgb(175, 175, 175);
+      --v-id-card-level0-color: rgb(230, 230, 230);
+      --v-id-card-level1-color: rgb(58, 214, 55);
+      --v-id-card-level2-color: rgb(50, 148, 255);
+      --v-id-card-level3-color: rgb(255, 200, 38);
+      --v-id-card-level4-color: rgb(255, 131, 38);
+      --v-id-card-level5-color: rgb(255, 38, 0);
+
+      --v-id-card-gradient-1: linear-gradient(to bottom, rgb(50, 134, 224), 40%, rgb(255, 255, 255));
+      --v-id-card-gradient-2: radial-gradient(rgb(255, 255, 255), rgb(226, 224, 233));
+      --v-id-card-gradient-3: radial-gradient(ellipse 100% 120% at bottom, rgb(200, 200, 200), rgb(21, 21, 30));
+    }
+
+
+
+    .id-card-vertical {
+      position: relative;
+      z-index: 0;
+      overflow: hidden;
+      margin: 2em auto;
+      box-sizing: border-box;
+      width: var(--v-id-card-width);
+      height: var(--v-id-card-height, auto);
+      min-height: calc(var(--v-id-card-width)* 1.414);
+      padding: var(--v-id-card-padding);
+      border-radius: var(--v-id-card-radius);
+
+      box-shadow: 0 0 calc(var(--v-id-card-width) * 0.025) gray;
+      font-family: 'Lato', "Noto Sans SC", "Noto Sans TC", Tahoma, sans-serif;
+      line-height: initial;
+      background-color: var(--v-id-card-bg-color);
+      color: var(--v-id-card-text-color);
+
+      display: grid;
+      grid-template-areas: "level level portrait"
+        "data . portrait"
+        "data . ."
+        "data info info";
+      grid-template-columns: 25% 1fr 46%;
+      grid-template-rows: calc(var(--v-id-card-width)* 0.39) auto 1em 1fr;
+    }
+
+    /* 水印 */
+
+    .id-card-vertical::after {
+      content: "";
+      display: block;
+      position: absolute;
+      z-index: -1;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: var(--v-id-card-logo-opacity, 0.08);
+      background-image: var(--v-id-card-custom-logo);
+      background-repeat: no-repeat;
+      background-size: 75% auto;
+      background-position: 186% 101%;
+      pointer-events: none;
+    }
+
+    /* ↖️左上角部分 */
+
+    .id-card-vertical .level {
+      grid-area: level;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .id-card-vertical .level-bar-container {
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--v-id-card-width) * 0.013);
+      width: calc(var(--v-id-card-width) * 0.39);
+      margin-left: calc(var(--v-id-card-padding) * -1);
+    }
+
+    .id-card-vertical .level-bar {
+      width: 100%;
+      height: calc(var(--v-id-card-width) * 0.0267);
+      background-color: var(--v-id-card-level0-color);
+    }
+
+    .id-card-vertical .level-1 .level-bar:nth-child(1) {
+      background-color: var(--v-id-card-level1-color);
+    }
+
+    .id-card-vertical .level-2 .level-bar:is(:nth-child(1), :nth-child(2)) {
+      background-color: var(--v-id-card-level2-color);
+    }
+
+    .id-card-vertical .level-3 .level-bar:is(:nth-child(1), :nth-child(2), :nth-child(3)) {
+      background-color: var(--v-id-card-level3-color);
+    }
+
+    .id-card-vertical .level-4 .level-bar:is(:nth-child(1), :nth-child(2), :nth-child(3), :nth-child(4)) {
+      background-color: var(--v-id-card-level4-color);
+    }
+
+    .id-card-vertical .level-5 .level-bar {
+      background-color: var(--v-id-card-level5-color);
+    }
+
+    .id-card-vertical .level-name {
+      font-weight: 900;
+      font-size: calc(var(--v-id-card-width) * 0.19);
+      position: absolute;
+      bottom: 0;
+    }
+
+    /* ↙️左下角部分 */
+
+    .id-card-vertical .data {
+      grid-area: data;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-end;
+      gap: calc(var(--v-id-card-width)* 0.02);
+    }
+
+    .id-card-vertical .barcode-wrap {
+      display: flex;
+      align-items: flex-end;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: calc(var(--v-id-card-width)* 0.02);
+      white-space: nowrap;
+      writing-mode: vertical-lr;
+      text-align: right;
+    }
+
+    .id-card-vertical .barcode {
+      font-family: 'Libre Barcode 39', sans-serif;
+      font-size: calc(var(--v-id-card-width) * 0.167);
+      font-weight: normal;
+      /* Barcode cannot display properly on higher font weights */
+      margin-left: -0.38em;
+      transform: scaleX(1.2);
+    }
+
+    .id-card-vertical .barcode-num {
+      font-weight: 900;
+      font-size: calc(var(--v-id-card-width) * 0.067);
+    }
+
+    .id-card-vertical .issue-exp {
+      display: flex;
+      flex-direction: column;
+      white-space: nowrap;
+      font-size: 0;
+      /* Remove <br> which takes up space */
+    }
+
+    .id-card-vertical span.issue-exp-title {
+      font-weight: 900;
+      font-size: calc(var(--v-id-card-width) * 0.043);
+      color: var(--v-id-card-secondary-color);
+    }
+
+    .id-card-vertical span.issue-exp-content {
+      font-weight: 900;
+      font-size: calc(var(--v-id-card-width) * 0.056);
+    }
+
+    /* ↗️右上角部分 */
+
+    .id-card-vertical .portrait {
+      grid-area: portrait;
+      border: solid calc(var(--v-id-card-width) * 0.019) var(--v-id-card-secondary-color);
+      aspect-ratio: 3 / 4;
+      position: relative;
+      margin: calc(var(--v-id-card-width)* 0.01);
+    }
+
+    .id-card-vertical .portrait::after {
+      content: " ";
+      display: block;
+      pointer-events: none;
+      position: absolute;
+      top: calc(var(--v-id-card-width)* -0.03);
+      bottom: calc(var(--v-id-card-width)* -0.03);
+      left: calc(var(--v-id-card-width)* -0.03);
+      right: calc(var(--v-id-card-width)* -0.03);
+      border: calc(var(--v-id-card-width)* 0.005) solid var(--v-id-card-secondary-color);
+
+      clip-path: polygon(0% 0%,
+          var(--v-id-card-portrait-horizontal-corner-size, 33.3%) 0%,
+          var(--v-id-card-portrait-horizontal-corner-size, 33.3%) var(--v-id-card-portrait-vertical-corner-size, 25%),
+          calc(100% - var(--v-id-card-portrait-horizontal-corner-size, 33.3%)) var(--v-id-card-portrait-vertical-corner-size, 25%),
+          calc(100% - var(--v-id-card-portrait-horizontal-corner-size, 33.3%)) 0%,
+          100% 0%,
+          100% var(--v-id-card-portrait-vertical-corner-size, 25%),
+          calc(100% - var(--v-id-card-portrait-horizontal-corner-size, 33.3%)) var(--v-id-card-portrait-vertical-corner-size, 25%),
+          calc(100% - var(--v-id-card-portrait-horizontal-corner-size, 33.3%)) calc(100% - var(--v-id-card-portrait-vertical-corner-size, 25%)),
+          100% calc(100% - var(--v-id-card-portrait-vertical-corner-size, 25%)),
+          100% 100%,
+          calc(100% - var(--v-id-card-portrait-horizontal-corner-size, 33.3%)) 100%,
+          calc(100% - var(--v-id-card-portrait-horizontal-corner-size, 33.3%)) calc(100% - var(--v-id-card-portrait-vertical-corner-size, 25%)),
+          var(--v-id-card-portrait-horizontal-corner-size, 33.3%) calc(100% - var(--v-id-card-portrait-vertical-corner-size, 25%)),
+          var(--v-id-card-portrait-horizontal-corner-size, 33.3%) 100%,
+          0% 100%,
+          0% calc(100% - var(--v-id-card-portrait-vertical-corner-size, 25%)),
+          var(--v-id-card-portrait-horizontal-corner-size, 33.3%) calc(100% - var(--v-id-card-portrait-vertical-corner-size, 25%)),
+          var(--v-id-card-portrait-horizontal-corner-size, 33.3%) var(--v-id-card-portrait-vertical-corner-size, 25%),
+          0% var(--v-id-card-portrait-vertical-corner-size, 25%),
+          0% 0%);
+    }
+
+    .id-card-vertical .portrait img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    /* ↘️右下角部分 */
+
+    .id-card-vertical .info {
+      grid-area: info;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: flex-end;
+      text-align: right;
+      gap: calc(var(--v-id-card-width)* 0.022);
+      word-break: break-all;
+      max-width: calc((var(--v-id-card-width) - var(--v-id-card-padding)* 2)* 0.75) !important;
+    }
+
+    .id-card-vertical span.info-title {
+      font-weight: 900;
+      font-size: calc(var(--v-id-card-width) * 0.057);
+      color: var(--v-id-card-secondary-color);
+    }
+
+    .id-card-vertical span.info-content {
+      font-weight: 900;
+      font-size: calc(var(--v-id-card-width) * 0.082);
+      display: flex;
+      flex-direction: row-reverse;
+      /* Prevent the text from overflowing rightwards */
+    }
+
+    /* 骄傲旗渐变 */
+    :root {
+      --v-id-card-gradient-pride:
+        linear-gradient(to bottom,
+          rgb(228, 0, 0) 16.7%,
+          rgb(255, 140, 0) 16.7%,
+          rgb(255, 140, 0) 33.3%,
+          rgb(255, 237, 0) 33.3%,
+          rgb(255, 237, 0) 50%,
+          rgb(0, 128, 38) 50%,
+          rgb(0, 128, 38) 66.7%,
+          rgb(0, 77, 255) 66.7%,
+          rgb(0, 77, 255) 83.3%,
+          rgb(117, 7, 135) 83.3%);
+
+      --v-id-card-gradient-phil:
+        linear-gradient(to bottom,
+          rgb(0, 0, 0) 12.5%,
+          rgb(121, 78, 16) 12.5%,
+          rgb(121, 78, 16) 25%,
+          rgb(228, 0, 0) 25%,
+          rgb(228, 0, 0) 37.5%,
+          rgb(255, 140, 0) 37.5%,
+          rgb(255, 140, 0) 50%,
+          rgb(255, 237, 0) 50%,
+          rgb(255, 237, 0) 62.5%,
+          rgb(0, 128, 38) 62.5%,
+          rgb(0, 128, 38) 75%,
+          rgb(0, 77, 255) 75%,
+          rgb(0, 77, 255) 87.5%,
+          rgb(117, 7, 135) 87.5%);
+
+      --v-id-card-gradient-abro:
+        linear-gradient(to bottom,
+          rgb(101, 194, 134) 20%,
+          rgb(180, 228, 204) 20%,
+          rgb(180, 228, 204) 40%,
+          rgb(255, 255, 255) 40%,
+          rgb(255, 255, 255) 60%,
+          rgb(231, 150, 183) 60%,
+          rgb(231, 150, 183) 80%,
+          rgb(217, 68, 110) 80%);
+
+      --v-id-card-gradient-agender:
+        linear-gradient(to bottom,
+          rgb(0, 0, 0) 14.3%,
+          rgb(187, 187, 187) 14.3%,
+          rgb(187, 187, 187) 28.6%,
+          rgb(255, 255, 255) 28.6%,
+          rgb(255, 255, 255) 42.9%,
+          rgb(186, 244, 132) 42.9%,
+          rgb(186, 244, 132) 57.1%,
+          rgb(255, 255, 255) 57.1%,
+          rgb(255, 255, 255) 71.4%,
+          rgb(187, 187, 187) 71.4%,
+          rgb(187, 187, 187) 85.7%,
+          rgb(0, 0, 0) 85.7%);
+
+      --v-id-card-gradient-aroace:
+        linear-gradient(to bottom,
+          rgb(226, 140, 0) 20%,
+          rgb(236, 205, 0) 20%,
+          rgb(236, 205, 0) 40%,
+          rgb(255, 255, 255) 40%,
+          rgb(255, 255, 255) 60%,
+          rgb(98, 174, 220) 60%,
+          rgb(98, 174, 220) 80%,
+          rgb(32, 56, 86) 80%);
+
+      --v-id-card-gradient-aromantic:
+        linear-gradient(to bottom,
+          rgb(58, 166, 64) 20%,
+          rgb(168, 212, 122) 20%,
+          rgb(168, 212, 122) 40%,
+          rgb(255, 255, 255) 40%,
+          rgb(255, 255, 255) 60%,
+          rgb(171, 171, 171) 60%,
+          rgb(171, 171, 171) 80%,
+          rgb(0, 0, 0) 80%);
+
+      --v-id-card-gradient-asexual:
+        linear-gradient(to bottom,
+          rgb(0, 0, 0) 25%,
+          rgb(149, 149, 149) 25%,
+          rgb(149, 149, 149) 50%,
+          rgb(255, 255, 255) 50%,
+          rgb(255, 255, 255) 75%,
+          rgb(102, 0, 102) 75%);
+
+      --v-id-card-gradient-bi:
+        linear-gradient(to bottom,
+          rgb(215, 0, 113) 40%,
+          rgb(156, 78, 151) 40%,
+          rgb(156, 78, 151) 60%,
+          rgb(0, 53, 170) 60%);
+
+      --v-id-card-gradient-bigender:
+        linear-gradient(to bottom,
+          rgb(104, 146, 217) 14.3%,
+          rgb(145, 195, 231) 14.3%,
+          rgb(145, 195, 231) 28.6%,
+          rgb(255, 255, 255) 28.6%,
+          rgb(255, 255, 255) 42.9%,
+          rgb(197, 164, 236) 42.9%,
+          rgb(197, 164, 236) 57.1%,
+          rgb(255, 255, 255) 57.1%,
+          rgb(255, 255, 525) 71.4%,
+          rgb(248, 171, 197) 71.4%,
+          rgb(248, 171, 197) 85.7%,
+          rgb(237, 121, 168) 85.7%);
+
+      --v-id-card-gradient-demiboy:
+        linear-gradient(to bottom,
+          rgb(127, 127, 127) 14.3%,
+          rgb(195, 195, 195) 14.3%,
+          rgb(195, 195, 195) 28.6%,
+          rgb(153, 217, 234) 28.6%,
+          rgb(153, 217, 234) 42.9%,
+          rgb(255, 255, 255) 42.9%,
+          rgb(255, 255, 255) 57.1%,
+          rgb(153, 217, 234) 57.1%,
+          rgb(153, 217, 234) 71.4%,
+          rgb(195, 195, 195) 71.4%,
+          rgb(195, 195, 195) 85.7%,
+          rgb(127, 127, 127) 85.7%);
+
+      --v-id-card-gradient-demigender:
+        linear-gradient(to bottom,
+          rgb(127, 127, 127) 14.3%,
+          rgb(195, 195, 195) 14.3%,
+          rgb(195, 195, 195) 28.6%,
+          rgb(251, 255, 117) 28.6%,
+          rgb(251, 255, 117) 42.9%,
+          rgb(255, 255, 255) 42.9%,
+          rgb(255, 255, 255) 57.1%,
+          rgb(251, 255, 117) 57.1%,
+          rgb(251, 255, 117) 71.4%,
+          rgb(195, 195, 195) 71.4%,
+          rgb(195, 195, 195) 85.7%,
+          rgb(127, 127, 127) 85.7%);
+
+      --v-id-card-gradient-demigirl:
+        linear-gradient(to bottom,
+          rgb(127, 127, 127) 14.3%,
+          rgb(195, 195, 195) 14.3%,
+          rgb(195, 195, 195) 28.6%,
+          rgb(255, 176, 202) 28.6%,
+          rgb(255, 176, 202) 42.9%,
+          rgb(255, 255, 255) 42.9%,
+          rgb(255, 255, 255) 57.1%,
+          rgb(255, 176, 202) 57.1%,
+          rgb(255, 176, 202) 71.4%,
+          rgb(195, 195, 195) 71.4%,
+          rgb(195, 195, 195) 85.7%,
+          rgb(127, 127, 127) 85.7%);
+
+      --v-id-card-gradient-enbian:
+        linear-gradient(to bottom,
+          rgb(62, 75, 198) 14.3%,
+          rgb(93, 95, 247) 14.3%,
+          rgb(93, 95, 247) 28.6%,
+          rgb(146, 159, 247) 28.6%,
+          rgb(146, 159, 247) 42.9%,
+          rgb(255, 255, 255) 42.9%,
+          rgb(255, 255, 255) 57.1%,
+          rgb(218, 160, 241) 57.1%,
+          rgb(218, 160, 241) 71.4%,
+          rgb(131, 66, 186) 71.4%,
+          rgb(131, 66, 186) 85.7%,
+          rgb(58, 27, 144) 85.7%);
+
+      --v-id-card-gradient-gaymen:
+        linear-gradient(to bottom,
+          rgb(7, 142, 112) 14.3%,
+          rgb(38, 206, 170) 14.3%,
+          rgb(38, 206, 170) 28.6%,
+          rgb(152, 232, 193) 28.6%,
+          rgb(152, 232, 193) 42.9%,
+          rgb(255, 255, 255) 42.9%,
+          rgb(255, 255, 255) 57.1%,
+          rgb(123, 173, 226) 57.1%,
+          rgb(123, 173, 226) 71.4%,
+          rgb(80, 73, 203) 71.4%,
+          rgb(80, 73, 203) 85.7%,
+          rgb(61, 26, 120) 85.7%);
+
+      --v-id-card-gradient-genderfluid:
+        linear-gradient(to bottom,
+          rgb(254, 117, 161) 20%,
+          rgb(255, 255, 255) 20%,
+          rgb(255, 255, 255) 40%,
+          rgb(190, 24, 214) 40%,
+          rgb(190, 24, 214) 60%,
+          rgb(0, 0, 0) 60%,
+          rgb(0, 0, 0) 80%,
+          rgb(51, 62, 188) 80%);
+
+      --v-id-card-gradient-genderflux:
+        linear-gradient(to bottom,
+          rgb(244, 118, 148) 16.7%,
+          rgb(242, 162, 185) 16.7%,
+          rgb(242, 162, 185) 33.3%,
+          rgb(206, 206, 206) 33.3%,
+          rgb(206, 206, 206) 50%,
+          rgb(124, 224, 247) 50%,
+          rgb(124, 224, 247) 66.7%,
+          rgb(62, 205, 249) 66.7%,
+          rgb(62, 205, 249) 83.3%,
+          rgb(255, 244, 141) 83.3%);
+
+      --v-id-card-gradient-genderqueer:
+        linear-gradient(to bottom,
+          rgb(182, 151, 218) 33.3%,
+          rgb(255, 255, 255) 33.3%,
+          rgb(255, 255, 255) 66.7%,
+          rgb(107, 142, 58) 66.7%);
+
+      --v-id-card-gradient-lesbian:
+        linear-gradient(to bottom,
+          rgb(215, 44, 0) 14.3%,
+          rgb(239, 116, 39) 14.3%,
+          rgb(239, 116, 39) 28.6%,
+          rgb(255, 151, 87) 28.6%,
+          rgb(255, 151, 87) 42.9%,
+          rgb(255, 255, 255) 42.9%,
+          rgb(255, 255, 255) 57.1%,
+          rgb(209, 98, 166) 57.1%,
+          rgb(209, 98, 166) 71.4%,
+          rgb(183, 85, 146) 71.4%,
+          rgb(183, 85, 146) 85.7%,
+          rgb(165, 1, 98) 85.7%);
+
+      --v-id-card-gradient-nb:
+        linear-gradient(to bottom,
+          rgb(254, 244, 51) 25%,
+          rgb(255, 255, 255) 25%,
+          rgb(255, 255, 255) 50%,
+          rgb(154, 89, 207) 50%,
+          rgb(154, 89, 207) 75%,
+          rgb(45, 45, 45) 75%);
+
+      --v-id-card-gradient-neutrois:
+        linear-gradient(to bottom,
+          rgb(255, 255, 255) 33.3%,
+          rgb(43, 157, 23) 33.3%,
+          rgb(43, 157, 23) 66.7%,
+          rgb(0, 0, 0) 66.7%);
+
+      --v-id-card-gradient-omni:
+        linear-gradient(to bottom,
+          rgb(255, 156, 206) 20%,
+          rgb(255, 82, 191) 20%,
+          rgb(255, 82, 191) 40%,
+          rgb(33, 0, 68) 40%,
+          rgb(33, 0, 68) 60%,
+          rgb(102, 94, 255) 60%,
+          rgb(102, 94, 255) 80%,
+          rgb(141, 167, 255) 80%);
+
+      --v-id-card-gradient-pan:
+        linear-gradient(to bottom,
+          rgb(255, 27, 141) 33.3%,
+          rgb(255, 217, 0) 33.3%,
+          rgb(255, 217, 0) 66.7%,
+          rgb(27, 179, 255) 66.7%);
+
+      --v-id-card-gradient-pangender:
+        linear-gradient(to bottom,
+          rgb(255, 247, 152) 14.3%,
+          rgb(254, 221, 204) 14.3%,
+          rgb(254, 221, 204) 28.6%,
+          rgb(255, 235, 252) 28.6%,
+          rgb(255, 235, 252) 42.9%,
+          rgb(255, 255, 255) 42.9%,
+          rgb(255, 255, 255) 57.1%,
+          rgb(255, 235, 252) 57.1%,
+          rgb(255, 235, 252) 71.4%,
+          rgb(254, 221, 204) 71.4%,
+          rgb(254, 221, 204) 85.7%,
+          rgb(255, 247, 152) 85.7%);
+
+      --v-id-card-gradient-poly:
+        linear-gradient(to bottom,
+          rgb(246, 28, 185) 33.3%,
+          rgb(7, 213, 105) 33.3%,
+          rgb(7, 213, 105) 66.7%,
+          rgb(28, 146, 246) 66.7%);
+
+      --v-id-card-gradient-qpr:
+        linear-gradient(to bottom,
+          rgb(255, 249, 125) 20%,
+          rgb(255, 174, 221) 20%,
+          rgb(255, 174, 221) 40%,
+          rgb(255, 255, 255) 40%,
+          rgb(255, 255, 255) 60%,
+          rgb(127, 127, 127) 60%,
+          rgb(127, 127, 127) 80%,
+          rgb(15, 15, 15) 80%);
+
+      --v-id-card-gradient-trans:
+        linear-gradient(to bottom,
+          rgb(91, 207, 250) 20%,
+          rgb(245, 171, 185) 20%,
+          rgb(245, 171, 185) 40%,
+          rgb(255, 255, 255) 40%,
+          rgb(255, 255, 255) 60%,
+          rgb(245, 171, 185) 60%,
+          rgb(245, 171, 185) 80%,
+          rgb(91, 207, 250) 80%);
+    }
+
+
+
+
+    /* 移除外边距和圆角 */
+    .id-card-vertical {
+      margin: 0;
+      border-radius: 0;
+    }
+
+    /* 移除证件照下方缝隙 */
+    .id-card-vertical .portrait img {
+      margin-bottom: -1rem;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div id="header">
+
+    <div id="toggle-language">
+      <input type="radio" id="en" name="lang" value="en" checked>
+      <label for="en" id="hint-en">English</label>
+
+      <input type="radio" id="cn" name="lang" value="cn">
+      <label for="cn" id="hint-cn">中文</label>
+
+      <input type="radio" id="jp" name="lang" value="jp">
+      <label for="jp" id="hint-jp">日本語</label>
+
+      <input type="radio" id="eo" name="lang" value="eo">
+      <label for="eo" id="hint-eo">Esperanto</label>
+      <br />
+
+    </div>
+
+    <div id="header-link-container">
+      <a id="link-to-wiki" href="https://scp-wiki.wikidot.com/component:v-id-card" target="_blank">
+        <span id="link-to-wiki-text">Original Page</span>
+      </a>
+    </div>
+  </div>
+
+  <hr>
+
+  <div id="content-wrap">
+
+    <div id="form-group">
+
+      <div id="basic-area">
+
+        <div id="name-area" class="large-area">
+
+          <label for="input-name" id="hint-input-name">姓名：</label>
+          <textarea id="input-name"></textarea>
+
+          <div class="checkbox-wrap">
+            <input type="checkbox" id="name-nowrap">
+            <label for="name-nowrap" id="hint-name-nowrap">禁止换行</label>
+          </div>
+
+        </div>
+
+
+        <div id="department-area" class="large-area">
+
+          <label for="input-department" id="hint-input-department">部门：</label>
+          <textarea id="input-department"></textarea>
+
+          <div class="checkbox-wrap">
+            <input type="checkbox" id="department-nowrap">
+            <label for="department-nowrap" id="hint-department-nowrap">禁止换行</label>
+          </div>
+
+        </div>
+
+
+        <div id="position-area" class="large-area">
+
+          <label for="input-position" id="hint-input-position">职位：</label>
+          <textarea id="input-position"></textarea>
+
+          <div class="checkbox-wrap">
+            <input type="checkbox" id="position-nowrap">
+            <label for="position-nowrap" id="hint-position-nowrap">禁止换行</label>
+          </div>
+
+        </div>
+
+
+        <div id="facility-area" class="large-area">
+
+          <label for="input-facility" id="hint-input-facility">设施：</label>
+          <textarea id="input-facility"></textarea>
+
+          <div class="checkbox-wrap">
+            <input type="checkbox" id="facility-nowrap">
+            <label for="facility-nowrap" id="hint-facility-nowrap">禁止换行</label>
+          </div>
+
+        </div>
+
+        <hr>
+
+        <div id="security-level-area">
+
+          <div class="small-area">
+            <label for="input-level-char" id="hint-input-level-char">人员等级：</label>
+            <select id="input-level-char">
+              <option>A</option>
+              <option>B</option>
+              <option selected>C</option>
+              <option>D</option>
+              <option>E</option>
+            </select>
+          </div>
+
+          <div class="small-area">
+
+            <label for="input-level-num" id="hint-input-level-num">安保权限等级：</label>
+            <select id="input-level-num">
+              <option>0</option>
+              <option>1</option>
+              <option>2</option>
+              <option selected>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+          </div>
+
+        </div>
+
+
+        <div id="numeric-area">
+          <div class="small-area">
+            <label for="input-id" id="hint-input-id">编号：</label>
+            <input type="text" id="input-id" placeholder="XXXXXXX" />
+          </div>
+
+
+          <div class="small-area">
+            <label for="input-issue" id="hint-input-issue">发证日期（年月)：</label>
+            <input type="text" id="input-issue" placeholder="YYYY/MM" />
+          </div>
+
+
+          <div class="small-area">
+            <label for="input-exp" id="hint-input-exp">到期日期（年月)：</label>
+            <input type="text" id="input-exp" placeholder="YYYY/MM" />
+          </div>
+        </div>
+
+
+        <div id="background-area">
+          <div class="small-area">
+            <label for="input-bg" id="hint-input-bg">照片渐变样式：</label>
+            <select id="input-bg">
+              <optgroup id="default-gradients" label="默认">
+                <option id="no-gradient" value="none">
+                  <无>
+                </option>
+                <option id="gradient-1" value="var(--v-id-card-gradient-1)">
+                  渐变1
+                </option>
+                <option id="gradient-2" value="var(--v-id-card-gradient-2)">
+                  渐变2
+                </option>
+                <option id="gradient-3" value="var(--v-id-card-gradient-3)">
+                  渐变3
+                </option>
+              </optgroup>
+
+              <optgroup id="pride-flags" label="🌈骄傲旗">
+                <option id="abro" value="var(--v-id-card-gradient-abro)">
+                  流性恋
+                </option>
+                <option id="agender" value="var(--v-id-card-gradient-agender)">
+                  无性别
+                </option>
+                <option id="aroace" value="var(--v-id-card-gradient-aroace)">
+                  无浪漫无性吸引
+                </option>
+                <option id="aromantic" value="var(--v-id-card-gradient-aromantic)">
+                  无浪漫
+                </option>
+                <option id="asexual" value="var(--v-id-card-gradient-asexual)">
+                  无性吸引
+                </option>
+                <option id="bi" value="var(--v-id-card-gradient-bi)">
+                  双性恋
+                </option>
+                <option id="bigender" value="var(--v-id-card-gradient-bigender)">
+                  双性别
+                </option>
+                <option id="demiboy" value="var(--v-id-card-gradient-demiboy)">
+                  部分男性
+                </option>
+                <option id="demigender" value="var(--v-id-card-gradient-demigender)">
+                  部分性别
+                </option>
+                <option id="demigirl" value="var(--v-id-card-gradient-demigirl)">
+                  部分女性
+                </option>
+                <option id="enbian" value="var(--v-id-card-gradient-enbian)">
+                  非二元同性恋
+                </option>
+                <option id="gaymen" value="var(--v-id-card-gradient-gaymen)">
+                  男同性恋
+                </option>
+                <option id="genderfluid" value="var(--v-id-card-gradient-genderfluid)">
+                  流动性别
+                </option>
+                <option id="genderflux" value="var(--v-id-card-gradient-genderflux)">
+                  波动性别
+                </option>
+                <option id="genderqueer" value="var(--v-id-card-gradient-genderqueer)">
+                  性别酷儿
+                </option>
+                <option id="lesbian" value="var(--v-id-card-gradient-lesbian)">
+                  女同性恋
+                </option>
+                <option id="nb" value="var(--v-id-card-gradient-nb)">
+                  非二元性别
+                </option>
+                <option id="neutrois" value="var(--v-id-card-gradient-neutrois)">
+                  中性
+                </option>
+                <option id="omni" value="var(--v-id-card-gradient-omni)">
+                  全性恋
+                </option>
+                <option id="pan" value="var(--v-id-card-gradient-pan)">
+                  泛性恋
+                </option>
+                <option id="pangender" value="var(--v-id-card-gradient-pangender)">
+                  泛性别
+                </option>
+                <option id="poly" value="var(--v-id-card-gradient-poly)">
+                  多性恋
+                </option>
+                <option id="qpr" value="var(--v-id-card-gradient-qpr)">
+                  酷儿柏拉图
+                </option>
+                <option id="trans" value="var(--v-id-card-gradient-trans)">
+                  跨性别
+                </option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="small-area">
+            <label for="bg-color" id="hint-bg-color">背景颜色(纯色)：</label>
+            <input type="color" id="bg-color" value="#ffffff" />
+          </div>
+
+        </div>
+
+        <br />
+
+        <div class="upload-area">
+          <label for="input-photo" id="hint-input-photo">证件照上传：</label>
+          <input type="file" id="input-photo" accept="image/*" />
+          <button id="clear-photo" onclick="clearPhoto()">×</button>
+        </div>
+
+        <div id="hint-process" class="hint">图片不会上传，仅在本地处理。</div>
+
+      </div>
+
+      <div id="advanced-area">
+
+        <div class="upload-area">
+          <label for="input-logo" id="hint-input-logo">上传logo：</label>
+          <input type="file" id="input-logo" accept="image/*" />
+          <button id="clear-logo" onclick="clearLogo()">×</button>
+        </div>
+
+        <div id="slider-wrap">
+          <label for="opacity-slider" id="hint-opacity-slider">logo不透明度：</label>
+          <input type="range" id="opacity-slider" min="1" max="100" value="8">
+          <input type="number" id="opacity-input" min="0" max="100" value="8"> <label for="opacity-input"
+            id="hint-opacity-unit">%</label>
+        </div>
+
+      </div>
+
+      <div id="button-area">
+
+        <button id="update" onclick="updateCard()">✅ 生成预览</button>
+        <button id="export-png" onclick="captureAsPng('#preview')">📸 导出 PNG</button>
+        <button id="export-svg" onclick="captureAsSvg('#preview')">💾 导出 SVG</button>
+        <button id="reset" onclick="resetAll()">❌ 清空</button>
+
+      </div>
+
+      <br />
+
+    </div>
+
+
+
+
+
+    <div id="preview-wrap">
+
+      <div id="slider-area">
+
+        <div id="slider-wrap-2">
+          <label for="width-slider" id="hint-width-slider">预览宽度：</label>
+          <input type="range" id="width-slider" min="1" max="5000" value="300">
+          <input type="number" id="width-input" min="1" max="5000" value="300"> <label for="width-input"
+            id="hint-width-unit">px</label>
+        </div>
+
+        <div id="hint-width" class="hint">这也会改变导出图片的大小，而最终图片还会比这个略宽一些。</div>
+
+      </div>
+
+
+
+      <div id="preview" class="id-card-vertical">
+        <div class="level">
+          <div class="level-bar-container level-3" id="level-bars">
+            <div class="level-bar"></div>
+            <div class="level-bar"></div>
+            <div class="level-bar"></div>
+            <div class="level-bar"></div>
+            <div class="level-bar"></div>
+          </div>
+          <div class="level-name" id="level-name">C-3</div>
+        </div>
+        <div class="portrait" id="portrait" style="background-image: none;">
+          <img
+            src="data:image/svg+xml,%3Csvg id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 300 400' style='enable-background:new 0 0 300 400;' xml:space='preserve'%3E%3Cstyle type='text/css'%3E .st0%7Bfill:%23CCCCCC;stroke:%23999999;stroke-width:5;stroke-miterlimit:10;%7D
+%3C/style%3E%3Ccircle class='st0' cx='150' cy='110' r='70'/%3E%3Cpath class='st0' d='M46,400c9.2-130.9,69.7-200,69.7-200h68.6c0,0,60.5,69.1,69.7,200'/%3E%3C/svg%3E"
+            alt="portrait" id="portrait-img" />
+        </div>
+        <div class="data">
+          <div class="barcode-wrap">
+            <div class="barcode" id="barcode">*0000000*</div>
+            <div class="barcode-num" id="barcode-num">0000000</div>
+          </div>
+          <div class="issue-exp">
+            <span class="issue-exp-title" id="issue-exp-title">ISSUE-EXP</span><br />
+            <span class="issue-exp-content" id="issue-date">MM/YYYY</span><br />
+            <span class="issue-exp-content" id="exp-date">MM/YYYY</span>
+          </div>
+        </div>
+        <div class="info">
+          <div class="fullname">
+            <span class="info-title" id="name-title">FULL NAME</span><br />
+            <span class="info-content" id="full-name">?</span>
+          </div>
+          <div class="department">
+            <span class="info-title" id="department-title">DEPARTMENT</span><br />
+            <span class="info-content" id="department">?</span>
+          </div>
+          <div class="position">
+            <span class="info-title" id="position-title">POSITION</span><br />
+            <span class="info-content" id="position">?</span>
+          </div>
+          <div class="facility">
+            <span class="info-title" id="facility-title">FACILITY</span><br />
+            <span class="info-content" id="facility">?</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <script id="toggle-translation">
+
+    // Translate script (per radio button click)
+
+    const translations = {
+
+      // 中文简体（cn）
+
+      cn: {
+        links: {
+          "link-to-wiki": "https://scp-wiki-cn.wikidot.com/component:v-id-card",
+        },
+        fields: {
+          "name-title": "姓名",
+          "department-title": "部门",
+          "position-title": "职位",
+          "facility-title": "设施",
+          "issue-exp-title": "签发-到期",
+          "issue-date": "YYYY/MM",
+          "exp-date": "YYYY/MM",
+        },
+        labels: {
+          "link-to-wiki-text": "原网页",
+          "hint-input-name": "姓名：",
+          "hint-input-department": "部门：",
+          "hint-input-position": "职位：",
+          "hint-input-facility": "设施：",
+          "hint-input-level-char": "人员等级：",
+          "hint-input-level-num": "安保权限等级：",
+          "hint-input-id": "证件编号：",
+          "hint-input-issue": "发证日期（年月）：",
+          "hint-input-exp": "到期日期（年月）：",
+          "hint-input-bg": "图片背景渐变样式：",
+          "hint-bg-color": "图片背景颜色(纯色)：",
+          "hint-input-photo": "上传图片：",
+          "hint-input-logo": "上传自定义logo：",
+          "hint-opacity-slider": "logo不透明度：",
+          "hint-width-slider": "预览宽度：",
+          "hint-name-nowrap": "禁止换行",
+          "hint-department-nowrap": "禁止换行",
+          "hint-position-nowrap": "禁止换行",
+          "hint-facility-nowrap": "禁止换行",
+          "hint-process": "图片不会上传至云端，仅在您的浏览器中本地合成。",
+          "hint-width": "这也会改变导出图片的大小，而最终图片还会比这个略宽一些。",
+        },
+        textareas: {
+          "input-issue": "YYYY/MM",
+          "input-exp": "YYYY/MM",
+        },
+        optgroups: {
+          "default-gradients": "默认",
+          "pride-flags": "🌈骄傲旗",
+        },
+        options: {
+          "no-gradient": "<无>",
+          "gradient-1": "渐变1",
+          "gradient-2": "渐变2",
+          "gradient-3": "渐变3",
+
+          "abro": "流性恋",
+          "agender": "无性别",
+          "aroace": "无浪漫无性吸引",
+          "aromantic": "无浪漫",
+          "asexual": "无性吸引",
+          "bi": "双性恋",
+          "bigender": "双性别",
+          "demiboy": "部分男性",
+          "demigender": "部分性别",
+          "demigirl": "部分女性",
+          "enbian": "非二元同性恋",
+          "gaymen": "男同性恋",
+          "genderfluid": "流动性别",
+          "genderflux": "波动性别",
+          "genderqueer": "性别酷儿",
+          "lesbian": "女同性恋",
+          "nb": "非二元性别",
+          "neutrois": "中性",
+          "omni": "全性恋",
+          "pan": "泛性恋",
+          "pangender": "泛性别",
+          "poly": "多性恋",
+          "qpr": "酷儿柏拉图",
+          "trans": "跨性别",
+        },
+        buttons: {
+          "update": "✅ 生成预览",
+          "export-png": "📸 导出 PNG",
+          "export-svg": "💾 导出 SVG",
+          "reset": "❌ 清空",
+        },
+      },
+
+      // English（en）
+
+      en: {
+        links: {
+          "link-to-wiki": "https://scp-wiki.wikidot.com/component:v-id-card",
+        },
+        fields: {
+          "name-title": "FULL NAME",
+          "department-title": "DEPARTMENT",
+          "position-title": "POSITION",
+          "facility-title": "FACILITY",
+          "issue-exp-title": "ISSUE-EXP",
+          "issue-date": "MM/YYYY",
+          "exp-date": "MM/YYYY",
+        },
+        labels: {
+          "link-to-wiki-text": "Original Page",
+          "hint-input-name": "Name:",
+          "hint-input-department": "Department:",
+          "hint-input-position": "Job Position:",
+          "hint-input-facility": "Facility of Service:",
+          "hint-input-level-char": "Personnel Classification Level:",
+          "hint-input-level-num": "Security Clearance Level:",
+          "hint-input-id": "Serial Number:",
+          "hint-input-issue": "Card Issue Time:",
+          "hint-input-exp": "Card Expiry Time:",
+          "hint-input-bg": "Photo Background Gradient:",
+          "hint-bg-color": "Photo Background Color:",
+          "hint-input-photo": "Upload Photo:",
+          "hint-input-logo": "Upload Custom Logo:",
+          "hint-opacity-slider": "Logo Opacity:",
+          "hint-width-slider": "Preview Width:",
+          "hint-name-nowrap": "No Wrap",
+          "hint-department-nowrap": "No Wrap",
+          "hint-position-nowrap": "No Wrap",
+          "hint-facility-nowrap": "No Wrap",
+          "hint-process": "The images won't be uploaded to the web. They will only be local-processed in your browser.",
+          "hint-width": "This will also change the size of the exported image. The final image will be slightly larger than this value.",
+        },
+        textareas: {
+          "input-issue": "MM/YYYY",
+          "input-exp": "MM/YYYY",
+        },
+        optgroups: {
+          "default-gradients": "Default",
+          "pride-flags": "🌈Pride Flags",
+        },
+        options: {
+          "no-gradient": "<None>",
+          "gradient-1": "Gradient 1",
+          "gradient-2": "Gradient 2",
+          "gradient-3": "Gradient 3",
+
+          "abro": "Abrosexual",
+          "agender": "Agender",
+          "aroace": "Aromantic Asexual",
+          "aromantic": "Aromantic",
+          "asexual": "Asexual",
+          "bi": "Bisexual",
+          "bigender": "Bigender",
+          "demiboy": "Demiboy",
+          "demigender": "Demigender",
+          "demigirl": "Demigirl",
+          "enbian": "Enbian",
+          "gaymen": "Gay Men",
+          "genderfluid": "Genderfluid",
+          "genderflux": "Genderflux",
+          "genderqueer": "Genderqueer",
+          "lesbian": "Lesbian",
+          "nb": "Non-binary",
+          "neutrois": "Neutrois",
+          "omni": "Omnisexual",
+          "pan": "Pansexual",
+          "pangender": "Pangender",
+          "poly": "Polysexual",
+          "qpr": "Queerplatonic",
+          "trans": "Transgender",
+        },
+        buttons: {
+          "update": "✅ Generate Preview",
+          "export-png": "📸 Export as PNG",
+          "export-svg": "💾 Export as SVG",
+          "reset": "❌ Clear",
+        },
+      },
+
+      // Esperanto（eo）
+
+      eo: {
+        links: {
+          "link-to-wiki": "https://scp-esperanto.wikidot.com/component:v-id-card",
+        },
+        fields: {
+          "name-title": "PLENA NOMO",
+          "department-title": "FAKO",
+          "position-title": "OFICO",
+          "facility-title": "INSTITUCIO",
+          "issue-exp-title": "DONITA-ĜIS",
+          "issue-date": "MM/YYYY",
+          "exp-date": "MM/YYYY",
+        },
+        labels: {
+          "link-to-wiki-text": "Originala Paĝo",
+          "hint-input-name": "Plena Nomo:",
+          "hint-input-department": "Fako (Departemento de Ofico):",
+          "hint-input-position": "Ofico de Okupo:",
+          "hint-input-facility": "institucio de Servo:",
+          "hint-input-level-char": "Nivelo de Personara Klasado:",
+          "hint-input-level-num": "Nivelo de Sekureca Permeso:",
+          "hint-input-id": "Seria Numero:",
+          "hint-input-issue": "Donita Tempo de la Karto:",
+          "hint-input-exp": "Eksvalida Tempo de la Karto:",
+          "hint-input-bg": "Fona Kolortransiro de la Foto:",
+          "hint-bg-color": "Fona Koloro de la Foto:",
+          "hint-input-photo": "Alŝuti Foton:",
+          "hint-input-logo": "Alŝuti Propran Emblemo:",
+          "hint-opacity-slider": "Videbleco de la Emblemo:",
+          "hint-width-slider": "Larĝo de Antaŭrigardo:",
+          "hint-name-nowrap": "Sen-linifaldo",
+          "hint-department-nowrap": "Sen-linifaldo",
+          "hint-position-nowrap": "Sen-linifaldo",
+          "hint-facility-nowrap": "Sen-linifaldo",
+          "hint-process": "La bildoj ne estos alŝutitaj rete. Ili nur estos traktitaj en via retumilo.",
+          "hint-width": "Ĉi tio ankaŭ ŝanĝos la larĝon de via eksportita bildo. La fina bildo estos iomete pli larĝa ol ĉi tiu valoro.",
+        },
+        textareas: {
+          "input-issue": "MM/YYYY",
+          "input-exp": "MM/YYYY",
+        },
+        optgroups: {
+          "default-gradients": "Defaŭlta",
+          "pride-flags": "🌈Fierflagoj",
+        },
+        options: {
+          "no-gradient": "<Neniu>",
+          "gradient-1": "Kolortransiro 1",
+          "gradient-2": "Kolortransiro 2",
+          "gradient-3": "Kolortransiro 3",
+
+          "abro": "Fluseksema",
+          "agender": "Sengenra",
+          "aroace": "Senromantikema Senseksema",
+          "aromantic": "Senromantikema",
+          "asexual": "Senseksema",
+          "bi": "Dugenrema",
+          "bigender": "Dugenra",
+          "demiboy": "Partiĉa",
+          "demigender": "Partgenra",
+          "demigirl": "Partina",
+          "enbian": "Samneduumgenrema",
+          "gaymen": "Virgeja",
+          "genderfluid": "Flugenra",
+          "genderflux": "Fluktugenra",
+          "genderqueer": "Kvirgenra",
+          "lesbian": "Lesba",
+          "nb": "Neduumgenra",
+          "neutrois": "Neŭtra",
+          "omni": "Ĉiogenrema",
+          "pan": "Tutgenrema",
+          "pangender": "Tutgenra",
+          "poly": "Kelkgenrema",
+          "qpr": "Kvirplatona",
+          "trans": "Transgenra",
+        },
+        buttons: {
+          "update": "✅ Generi Antaŭrigardon",
+          "export-png": "📸 Eksporti PNG",
+          "export-svg": "💾 Eksporti SVG",
+          "reset": "❌ Forviŝi",
+        }
+      },
+
+      // 日本語（jp）
+
+      jp: {
+        links: {
+          "link-to-wiki": "http://scp-jp.wikidot.com/component:v-id-card",
+        },
+        fields: {
+          "name-title": "名前",
+          "department-title": "部門",
+          "position-title": "職位",
+          "facility-title": "施設",
+          "issue-exp-title": "発行日-期限",
+          "issue-date": "YYYY/MM",
+          "exp-date": "YYYY/MM",
+        },
+        labels: {
+          "link-to-wiki-text": "元のウェブページ",
+          "hint-input-name": "名前：",
+          "hint-input-department": "部門：",
+          "hint-input-position": "職位：",
+          "hint-input-facility": "セキュリティ施設：",
+          "hint-input-level-char": "職員の分類：",
+          "hint-input-level-num": "セキュリティクリアランスレベル：",
+          "hint-input-id": "カード番号：",
+          "hint-input-issue": "発行日（年/月）:",
+          "hint-input-exp": "有効期限（年月）",
+          "hint-input-bg": "画像の背景のグラデーション:",
+          "hint-bg-color": "画像の背景色（単色）：",
+          "hint-input-photo": "画像アップロード：",
+          "hint-input-logo": "カスタムロゴアップロード：",
+          "hint-opacity-slider": "ロゴの不透明度：",
+          "hint-width-slider": "プレビュー幅：",
+          "hint-name-nowrap": "改行を防ぐ",
+          "hint-department-nowrap": "改行を防ぐ",
+          "hint-position-nowrap": "改行を防ぐ",
+          "hint-facility-nowrap": "改行を防ぐ",
+          "hint-process": "画像はオンラインにアップロードせず、ブラウザ内だけで処理されます。",
+          "hint-width": "エクスポートされた画像のサイズも変更されます。実際の画像は指定サイズより少し大きくなる場合があります。",
+        },
+        textareas: {
+          "input-issue": "YYYY/MM",
+          "input-exp": "YYYY/MM",
+        },
+        optgroups: {
+          "default-gradients": "プリセット",
+          "pride-flags": "🌈プライド・フラッグ",
+        },
+        options: {
+          "no-gradient": "<皆無>",
+          "gradient-1": "グラデーション 1",
+          "gradient-2": "グラデーション 2",
+          "gradient-3": "グラデーション 3",
+
+          "abro": "Abrosexual アブロセクシャル",
+          "agender": "Agender 性別なし（アジェンダー）",
+          "aroace": "Aroace Aセクシャル",
+          "aromantic": "Aromantic アロマンティック",
+          "asexual": "Asexual ノンセクシャル",
+          "bi": "Bisexual バイセクシャル",
+          "bigender": "Bigender バイジェンダー",
+          "demiboy": "Demiboy 部分的に男性（デミボーイ）",
+          "demigender": "Demigender デミジェンダー",
+          "demigirl": "Demigirl 部分的に女性（デミガール）",
+          "enbian": "Enbian エンビアン",
+          "gaymen": "Gay Men ゲイ男性",
+          "genderfluid": "Genderfluid ジェンダーフルイッド",
+          "genderflux": "Genderflux ジェンダーフルクス",
+          "genderqueer": "Genderqueer ジェンダークィア",
+          "lesbian": "Lesbian レズビアン",
+          "nb": "Nonbinary ノンバイナリー",
+          "neutrois": "Neutrois ニュートロイス",
+          "omni": "Omnisexual オムニセクシャル",
+          "pan": "Pansexual パンセクシャル",
+          "pangender": "Pangender パンジェンダー",
+          "poly": "Polysexual ポリセクシャル",
+          "qpr": "Queerplatonic クィアプラトニック",
+          "trans": "Transgender トランスジェンダー",
+        },
+        buttons: {
+          "update": "✅ プレビューを生成",
+          "export-png": "📸 PNG エクスポート",
+          "export-svg": "💾 SVG エクスポート",
+          "reset": "❌ クリア",
+        },
+      },
+    };
+
+
+    // Listen to the language toggle radio button change.
+
+    document.querySelectorAll('input[name="lang"]').forEach(radio => {
+      radio.addEventListener('change', function () {
+        changeLanguage(this.value);
+      });
+    });
+
+
+    // Render language change.
+
+    function changeLanguage(lang) {
+
+      const groups = ["links", "fields", "labels", "textareas", "options", "buttons", "optgroups"];
+
+      for (const group of groups) {
+
+        if (!translations[lang][group]) continue;
+
+        for (const [key, text] of Object.entries(translations[lang][group])) {
+
+          let element = null;
+
+          // Start to browse through the language data array; try to find elements with exact ids same as the array keys, then replace their contents.
+
+          if (group === "links") {
+
+            console.log(`Group: ${group}, Key: ${key}, Text: ${text}, Element:`, element);
+
+            element = document.getElementById(key);
+
+            // Change href for <a>.
+
+            if (element) element.href = text;
+            if (!element) {
+              console.warn(`Element not found for group "${group}", key "${key}"`);
+            }
+          }
+
+          else if (group === "textareas") {
+
+            console.log(`Group: ${group}, Key: ${key}, Text: ${text}, Element:`, element);
+
+            element = document.getElementById(key);
+
+            // Change placeholder text for <input>.
+
+            if (element) element.placeholder = text;
+            if (!element) {
+              console.warn(`Element not found for group "${group}", key "${key}"`);
+            }
+          }
+          else if (group === "optgroups") {
+
+            console.log(`Group: ${group}, Key: ${key}, Text: ${text}, Element:`, element);
+
+            element = document.getElementById(key);
+
+            // Change label text for <optgroup>.
+
+            if (element) element.label = text;
+            if (!element) {
+              console.warn(`Element not found for group "${group}", key "${key}"`);
+            }
+          }
+          else {
+
+            console.log(`Group: ${group}, Key: ${key}, Text: ${text}, Element:`, element);
+
+            element = document.getElementById(key);
+
+            // Otherwise, change only text content for <label>, <span>, and possibly <div>.
+
+            if (element) element.textContent = text;
+            if (!element) {
+              console.warn(`Element not found for group "${group}", key "${key}"`);
+            }
+          }
+        }
+      }
+    }
+
+    /*
+  
+    Those codes are either unusable or redundant.
+  
+  
+            function changeLanguage(lang) {
+  
+                document.getElementById('name-title').textContent = translations[lang]["fields"]["name-title"];
+                document.getElementById('department-title').textContent = translations[lang]["fields"]["department-title"];
+                document.getElementById('position-title').textContent = translations[lang]["fields"]["position-title"];
+                document.getElementById('facility-title').textContent = translations[lang]["fields"]["facility-title"];
+                document.getElementById('issue-exp-title').textContent = translations[lang]["fields"]["issue-exp-title"];
+  
+  
+                document.getElementById('update').textContent = translations[lang]["buttons"]["update"];
+                document.getElementById('export-png').textContent = translations[lang]["buttons"]["export-png"];
+                document.getElementById('reset').textContent = translations[lang]["buttons"]["reset"];
+    */
+
+
+    /*
+    
+                  for (const [key, text] of Object.entries(translations[lang])) {
+                      const element = document.getElementById(key);
+                      if (element) element.textContent = text;
+                  }
+    
+                  if (translations[lang].labels) {
+                      for (const [field, text] of Object.entries(translations[lang].labels)) {
+                          const label = document.querySelector(`label[for="${field}"]`);
+                          if (label) label.textContent = text;
+                      }
+                  }
+    
+    */
+
+
+    // Initialize language to English
+
+    changeLanguage("en");
+  </script>
+
+
+
+  <script id="slider-config">
+
+    // Always-on script
+
+    const widthSlider = document.getElementById('width-slider');
+    const widthInput = document.getElementById('width-input');
+    const opacitySlider = document.getElementById('opacity-slider');
+    const opacityInput = document.getElementById('opacity-input');
+
+    const root = document.documentElement;
+
+    // Keep the slider value always the same as numeric input value.
+
+    widthInput.value = widthSlider.value;
+    opacityInput.value = opacitySlider.value;
+
+    // Update CSS variable when the slider is dragged.
+
+    widthSlider.addEventListener('input', function () {
+      root.style.setProperty('--v-id-card-width', this.value + 'px');
+      widthInput.value = this.value;
+    });
+
+    opacitySlider.addEventListener('input', function () {
+      root.style.setProperty('--v-id-card-logo-opacity', this.value / 100);
+      opacityInput.value = this.value;
+    });
+
+    // Also update CSS variable either when user inputs or changes a pixel number.
+
+    widthInput.addEventListener('input', function () {
+      const value = Math.min(Math.max(this.value, 1), 5000);
+      root.style.setProperty('--v-id-card-width', value + 'px');
+      widthSlider.value = value;
+    });
+
+    opacityInput.addEventListener('input', function () {
+      const value = Math.min(Math.max(this.value, 0), 100);
+      root.style.setProperty('--v-id-card-logo-opacity', value / 100);
+      opacitySlider.value = value;
+    });
+
+    // If user selects any background color, then reset the background gradient option to <None>.
+    // Make sure the background color won't be covered by the gradient when the user generates the preview,
+    // in case they forgot to set the gradient type to <None>.
+
+    document.getElementById('bg-color').addEventListener('input', function () {
+      document.getElementById('input-bg').value = 'none';
+    });
+
+    // Update background logo immediately after it's uploaded.
+
+    document.getElementById("input-logo").addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          root.style.setProperty('--v-id-card-custom-logo', `url('${e.target.result}')`);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+  </script>
+
+
+
+  <script id="preview-generation">
+
+    // Preview Generation script (per "Generate" button click)
+
+    function updateCard() {
+
+      // Card information
+
+      document.getElementById("full-name").textContent = document.getElementById("input-name").value;
+      document.getElementById("department").textContent = document.getElementById("input-department").value;
+      document.getElementById("position").textContent = document.getElementById("input-position").value;
+      document.getElementById("facility").textContent = document.getElementById("input-facility").value;
+
+      // Nowrap options
+
+      if (document.getElementById('name-nowrap').checked) {
+        document.getElementById("full-name").style.whiteSpace = 'nowrap';
+      } else {
+        document.getElementById("full-name").style.whiteSpace = 'pre-wrap';
+      }
+
+      if (document.getElementById('department-nowrap').checked) {
+        document.getElementById("department").style.whiteSpace = 'nowrap';
+      } else {
+        document.getElementById("department").style.whiteSpace = 'pre-wrap';
+      }
+
+      if (document.getElementById('position-nowrap').checked) {
+        document.getElementById("position").style.whiteSpace = 'nowrap';
+      } else {
+        document.getElementById("position").style.whiteSpace = 'pre-wrap';
+      }
+
+      if (document.getElementById('facility-nowrap').checked) {
+        document.getElementById("facility").style.whiteSpace = 'nowrap';
+      } else {
+        document.getElementById("facility").style.whiteSpace = 'pre-wrap';
+      }
+
+      // Construct the personnel level
+
+      const levelChar = document.getElementById("input-level-char").value;
+      const levelNum = document.getElementById("input-level-num").value;
+      document.getElementById("level-name").textContent = levelChar + "-" + levelNum;
+      const levelBars = document.getElementById("level-bars");
+      levelBars.className = "level-bar-container level-" + levelNum;
+
+      const id = document.getElementById("input-id").value;
+      document.getElementById("barcode").textContent = "*" + id + "*";
+      document.getElementById("barcode-num").textContent = id;
+
+      // Issue & Expiry date
+
+      document.getElementById("issue-date").textContent = document.getElementById("input-issue").value;
+      document.getElementById("exp-date").textContent = document.getElementById("input-exp").value;
+
+      // Portrait Background gradient & color
+
+      document.getElementById("portrait").style.backgroundImage = document.getElementById("input-bg").value;
+      document.getElementById("portrait").style.backgroundColor = document.getElementById('bg-color').value;
+
+      // Show portrait image
+
+      const file = document.getElementById("input-photo").files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById('portrait-img').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+  </script>
+
+
+
+  <script id="reset">
+
+    // Clear photo upload.
+
+    function clearPhoto() {
+      document.getElementById('input-photo').value = '';
+    }
+
+    // Clear logo upload.
+
+    function clearLogo() {
+      document.getElementById('input-logo').value = '';
+      root.style.setProperty('--v-id-card-custom-logo', 'var(--v-id-card-logo)'); // Reset background logo
+    }
+
+
+    // Clear all inputs, injected styles and files (per "Reset" button click)
+
+    function resetAll() {
+      root.style.setProperty('--v-id-card-width', 'calc(150px + 15vw)'); // Reset preview width
+
+      document.getElementById("portrait").style.backgroundImage = "none";  // Reset background gradient to none
+      document.getElementById("portrait").style.backgroundColor = "#ffffff";  // Reset background color to white
+
+      // Reset portrait image to placeholder dummy
+      document.getElementById('portrait-img').src = "data:image/svg+xml,%3Csvg id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 300 400' style='enable-background:new 0 0 300 400;' xml:space='preserve'%3E%3Cstyle type='text/css'%3E .st0%7Bfill:%23CCCCCC;stroke:%23999999;stroke-width:5;stroke-miterlimit:10;%7D%3C/style%3E%3Ccircle class='st0' cx='150' cy='110' r='70'/%3E%3Cpath class='st0' d='M46,400c9.2-130.9,69.7-200,69.7-200h68.6c0,0,60.5,69.1,69.7,200'/%3E%3C/svg%3E";
+
+      // Clear inputs
+      document.querySelectorAll('input, textarea, select').forEach(el => {
+
+        if (el.type === 'color') {
+          el.value = '#ffffff'; // Set color picker to white
+        }
+
+        else if (el.type === 'checkbox') {
+          el.checked = false; // Uncheck checkboxes
+        }
+
+        else if (el.type === 'radio') {
+          return; // DO NOT uncheck the language toggle button
+        }
+
+        else if (el.tagName === 'SELECT') {
+          el.value = 'none'; // Reset the dropdown menu
+        }
+
+        else {
+          el.value = ''; // Clear all texts
+        }
+
+      });
+    }
+  </script>
+
+
+
+
+  <!-- Capture image from DIV via snapDOM -->
+
+  <script src="https://unpkg.com/@zumer/snapdom@latest/dist/snapdom.min.js"></script>
+
+  <script id="download-png">
+    // Download PNG script (per "Export as PNG" button click)
+
+    async function captureAsPng(selector) {
+
+      const el = document.querySelector(selector);
+      // If the card failed to load or doesn't exist anyway, exit the function.
+      if (!el) return;
+
+      try {
+        // Wait for the fonts to load
+        await document.fonts.ready;
+
+        const result = await snapdom(el, { scale: 1 });
+        const img = await result.toPng();
+
+        document.body.appendChild(img);
+        await result.download({ format: 'png', filename: 'id-card' });
+        document.body.removeChild(img);
+      }
+
+      catch (error) {
+        console.error("Fail to export PNG.", error);
+      }
+
+    }
+
+  </script>
+
+
+  <script id="download-svg">
+    // Download SVG script (per "Export as SVG" button click)
+
+    async function captureAsSvg(selector) {
+
+      const el = document.querySelector(selector);
+      // If the card failed to load or doesn't exist anyway, exit the function.
+      if (!el) return;
+
+      try {
+        // Wait for the fonts to load
+        await document.fonts.ready;
+
+        // Get Blob
+        const blob = await snapdom.toBlob(el);
+
+        // Write the Blob object into a link, triggering download
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "scp-id-card.svg";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+      catch (error) {
+        console.error("Fail to export SVG.", error);
+      }
+    }
+
+  </script>
+
+</body>
+
+</html>
