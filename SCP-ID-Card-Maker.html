@@ -96,12 +96,12 @@
 
 
 
-    #button-area {
-      margin: 0 auto;
+    .button-area {
+      margin: 2em auto 0;
       width: fit-content;
     }
 
-    #button-area button {
+    .button-area button {
       padding: 0.5em 0.8em;
     }
 
@@ -120,9 +120,54 @@
       display: flex;
       flex-direction: column;
       gap: 1em;
+      padding: 0 18px;
+      display: none;
+      overflow: hidden;
     }
 
-    #hint-width {
+    #collapsible-wrap {
+      border-radius: 1em;
+      width: 100%;
+      border: 1px dashed gray;
+    }
+
+    .collapsible {
+      background-color: transparent;
+      cursor: pointer;
+      padding: 0.5em 1em;
+      text-align: left;
+      border: none;
+      outline: none;
+      font-size: 1em;
+    }
+
+    .collapsible:hover {
+      text-decoration: underline;
+    }
+
+    .collapsible:after {
+      content: '▶';
+      float: left;
+      margin-right: 0.5em;
+    }
+
+    .active:after {
+      content: "▼";
+      float: left;
+    }
+
+    #advanced-area .small-area input[type=color] {
+      width: 40px;
+      height: 40px;
+    }
+
+    input#individual-bar-color {
+      width: 2em;
+      height: 2em;
+    }
+
+    #hint-width,
+    #hint-bug {
       text-align: center;
       font-size: 0.9rem;
       color: gray;
@@ -135,6 +180,12 @@
       border-left: 2px dashed gray;
       display: flex;
       flex-direction: column;
+    }
+
+    #shadow-wrap {
+      box-shadow: 0 0 calc(var(--v-id-card-width) * 0.025) gray;
+      width: min-content;
+      height: min-content;
     }
 
     #preview {
@@ -157,16 +208,16 @@
   </style>
 
   <style>
-    /* Lato Black 字体 */
+    /* Lato Black Font */
     @import url('https://fonts.googleapis.com/css2?family=Lato:wght@900&display=swap');
 
-    /* 思源黑体（简体中文、繁体中文、日文） */
+    /* Noto Sans SC/TC/JP 思源黑体（简体中文、繁體中文、日本語） */
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@900&family=Noto+Sans+TC:wght@900&family=Noto+Sans+JP:wght@900&display=swap');
 
-    /* Libre Barcode 39 条码字体 */
+    /* Libre Barcode 39 Font */
     @import url('https://fonts.googleapis.com/css2?family=Libre+Barcode+39&display=swap');
 
-    /* 全局设置 */
+    /* Global Settings */
     :root {
       --v-id-card-width: calc(150px + 15vw);
       --v-id-card-radius: calc(var(--v-id-card-width) * 0.05);
@@ -189,7 +240,11 @@
       --v-id-card-gradient-3: radial-gradient(ellipse 100% 120% at bottom, rgb(200, 200, 200), rgb(21, 21, 30));
     }
 
-
+    @media only screen and (max-width: 167px) {
+      :root {
+        --v-id-card-width: 90vw;
+      }
+    }
 
     .id-card-vertical {
       position: relative;
@@ -205,6 +260,7 @@
 
       box-shadow: 0 0 calc(var(--v-id-card-width) * 0.025) gray;
       font-family: 'Lato', "Noto Sans SC", "Noto Sans TC", Tahoma, sans-serif;
+      font-size: calc(var(--v-id-card-width) * 0.06);
       line-height: initial;
       background-color: var(--v-id-card-bg-color);
       color: var(--v-id-card-text-color);
@@ -215,16 +271,17 @@
         "data . ."
         "data info info";
       grid-template-columns: 25% 1fr 46%;
-      grid-template-rows: calc(var(--v-id-card-width)* 0.39) auto 1em 1fr;
+      grid-template-rows:
+        calc(var(--v-id-card-width) * 0.4) calc(var(--v-id-card-width) * 0.1) calc(var(--v-id-card-width) * 0.1) 1fr;
     }
 
-    /* 水印 */
+    /* Watermark */
 
     .id-card-vertical::after {
-      content: "";
+      content: " ";
+      z-index: -1;
       display: block;
       position: absolute;
-      z-index: -1;
       top: 0;
       left: 0;
       width: 100%;
@@ -237,7 +294,7 @@
       pointer-events: none;
     }
 
-    /* ↖️左上角部分 */
+    /* ↖️Top-left part */
 
     .id-card-vertical .level {
       grid-area: level;
@@ -287,7 +344,7 @@
       bottom: 0;
     }
 
-    /* ↙️左下角部分 */
+    /* ↙️Bottom-left part */
 
     .id-card-vertical .data {
       grid-area: data;
@@ -342,7 +399,7 @@
       font-size: calc(var(--v-id-card-width) * 0.056);
     }
 
-    /* ↗️右上角部分 */
+    /* ↗️Top-right part */
 
     .id-card-vertical .portrait {
       grid-area: portrait;
@@ -362,7 +419,6 @@
       left: calc(var(--v-id-card-width)* -0.03);
       right: calc(var(--v-id-card-width)* -0.03);
       border: calc(var(--v-id-card-width)* 0.005) solid var(--v-id-card-secondary-color);
-
       clip-path: polygon(0% 0%,
           var(--v-id-card-portrait-horizontal-corner-size, 33.3%) 0%,
           var(--v-id-card-portrait-horizontal-corner-size, 33.3%) var(--v-id-card-portrait-vertical-corner-size, 25%),
@@ -392,7 +448,7 @@
       object-fit: cover;
     }
 
-    /* ↘️右下角部分 */
+    /* ↘️Bottom-right part */
 
     .id-card-vertical .info {
       grid-area: info;
@@ -420,7 +476,7 @@
       /* Prevent the text from overflowing rightwards */
     }
 
-    /* 骄傲旗渐变 */
+    /* 🌈 Pride flags */
     :root {
       --v-id-card-gradient-pride:
         linear-gradient(to bottom,
@@ -731,13 +787,11 @@
           rgb(91, 207, 250) 80%);
     }
 
-
-
-
-    /* 移除外边距和圆角 */
+    /* 移除外边距、阴影和圆角 */
     .id-card-vertical {
       margin: 0;
       border-radius: 0;
+      box-shadow: none;
     }
 
     /* 移除证件照下方缝隙 */
@@ -999,29 +1053,95 @@
         <div id="hint-process" class="hint">图片不会上传，仅在本地处理。</div>
 
       </div>
+      <div id="collapsible-wrap">
+        <button type="button" class="collapsible" id="collapsible">高级选项</button>
+        <div id="advanced-area">
 
-      <div id="advanced-area">
+          <div class="upload-area">
+            <label for="input-logo" id="hint-input-logo">上传logo：</label>
+            <input type="file" id="input-logo" accept="image/*" />
+            <button id="clear-logo" onclick="clearLogo()">×</button>
+          </div>
 
-        <div class="upload-area">
-          <label for="input-logo" id="hint-input-logo">上传logo：</label>
-          <input type="file" id="input-logo" accept="image/*" />
-          <button id="clear-logo" onclick="clearLogo()">×</button>
+          <div id="slider-wrap">
+            <label for="opacity-slider" id="hint-opacity-slider">logo不透明度：</label>
+            <input type="range" id="opacity-slider" min="1" max="100" value="8">
+            <input type="number" id="opacity-input" min="0" max="100" value="8"> <label for="opacity-input"
+              id="hint-opacity-unit">%</label>
+          </div>
+
+
+          <div class="small-area">
+            <label for="card-bg-color" id="hint-card-bg-color">卡片背景颜色：</label>
+            <input type="color" id="card-bg-color" value="#ffffff" />
+          </div>
+
+          <div class="small-area">
+            <label for="main-text-color" id="hint-main-text-color">主要文字颜色：</label>
+            <input type="color" id="main-text-color" value="#000000" />
+          </div>
+
+          <div class="small-area">
+            <label for="aux-text-color" id="hint-aux-text-color">次要文字颜色：</label>
+            <input type="color" id="aux-text-color" value="#afafaf" />
+          </div>
+
+          <hr>
+
+          <div class="small-area">
+            <label for="level0-color" id="hint-level0-color">0级权限颜色：</label>
+            <input type="color" id="level0-color" value="#e6e6e6" />
+          </div>
+
+          <div class="small-area">
+            <label for="level1-color" id="hint-level1-color">1级权限颜色：</label>
+            <input type="color" id="level1-color" value="#3ad637" />
+          </div>
+
+          <div class="small-area">
+            <label for="level2-color" id="hint-level2-color">2级权限颜色：</label>
+            <input type="color" id="level2-color" value="#3294ff" />
+          </div>
+
+          <div class="small-area">
+            <label for="level3-color" id="hint-level3-color">3级权限颜色：</label>
+            <input type="color" id="level3-color" value="#ffc826" />
+          </div>
+
+          <div class="small-area">
+            <label for="level4-color" id="hint-level4-color">4级权限颜色：</label>
+            <input type="color" id="level4-color" value="#ff8326" />
+          </div>
+
+          <div class="small-area">
+            <label for="level5-color" id="hint-level5-color">5级权限颜色：</label>
+            <input type="color" id="level5-color" value="#ff2600" />
+          </div>
+
+          <hr>
+
+          <div class="small-area" style="display: flex; flex-direction: column;">
+            <div style="display: flex; align-items: center;">
+              <label id="toggle-bar-color"></label>
+              <input type="checkbox" id="individual-bar-color" />
+              <label id="hint-five-colors">单独设置从上至下的每个色条颜色：</label>
+            </div>
+            <ol>
+
+              <li><input type="color" id="first-color" value="#ffffff" /></li>
+              <li><input type="color" id="second-color" value="#ffffff" /></li>
+              <li><input type="color" id="third-color" value="#ffffff" /></li>
+              <li><input type="color" id="fourth-color" value="#ffffff" /></li>
+              <li><input type="color" id="fifth-color" value="#ffffff" /></li>
+
+            </ol>
+          </div>
         </div>
-
-        <div id="slider-wrap">
-          <label for="opacity-slider" id="hint-opacity-slider">logo不透明度：</label>
-          <input type="range" id="opacity-slider" min="1" max="100" value="8">
-          <input type="number" id="opacity-input" min="0" max="100" value="8"> <label for="opacity-input"
-            id="hint-opacity-unit">%</label>
-        </div>
-
       </div>
 
-      <div id="button-area">
+      <div class="button-area" id="button-area-1">
 
         <button id="update" onclick="updateCard()">✅ 生成预览</button>
-        <button id="export-png" onclick="captureAsPng('#preview')">📸 导出 PNG</button>
-        <button id="export-svg" onclick="captureAsSvg('#preview')">💾 导出 SVG</button>
         <button id="reset" onclick="resetAll()">❌ 清空</button>
 
       </div>
@@ -1046,57 +1166,66 @@
         </div>
 
         <div id="hint-width" class="hint">这也会改变导出图片的大小，而最终图片还会比这个略宽一些。</div>
+        <div id="hint-bug" class="hint">如果遇到字体显示异常的问题，请略微调整此宽度，然后重试。</div>
 
       </div>
 
 
-
-      <div id="preview" class="id-card-vertical">
-        <div class="level">
-          <div class="level-bar-container level-3" id="level-bars">
-            <div class="level-bar"></div>
-            <div class="level-bar"></div>
-            <div class="level-bar"></div>
-            <div class="level-bar"></div>
-            <div class="level-bar"></div>
+      <div id="shadow-wrap">
+        <div id="preview" class="id-card-vertical">
+          <div class="level">
+            <div class="level-bar-container level-3" id="level-bars">
+              <div class="level-bar"></div>
+              <div class="level-bar"></div>
+              <div class="level-bar"></div>
+              <div class="level-bar"></div>
+              <div class="level-bar"></div>
+            </div>
+            <div class="level-name" id="level-name">C-3</div>
           </div>
-          <div class="level-name" id="level-name">C-3</div>
-        </div>
-        <div class="portrait" id="portrait" style="background-image: none;">
-          <img
-            src="data:image/svg+xml,%3Csvg id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 300 400' style='enable-background:new 0 0 300 400;' xml:space='preserve'%3E%3Cstyle type='text/css'%3E .st0%7Bfill:%23CCCCCC;stroke:%23999999;stroke-width:5;stroke-miterlimit:10;%7D
+          <div class="portrait" id="portrait" style="background-image: none;">
+            <img
+              src="data:image/svg+xml,%3Csvg id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 300 400' style='enable-background:new 0 0 300 400;' xml:space='preserve'%3E%3Cstyle type='text/css'%3E .st0%7Bfill:%23CCCCCC;stroke:%23999999;stroke-width:5;stroke-miterlimit:10;%7D
 %3C/style%3E%3Ccircle class='st0' cx='150' cy='110' r='70'/%3E%3Cpath class='st0' d='M46,400c9.2-130.9,69.7-200,69.7-200h68.6c0,0,60.5,69.1,69.7,200'/%3E%3C/svg%3E"
-            alt="portrait" id="portrait-img" />
+              alt="portrait" id="portrait-img" />
+          </div>
+          <div class="data">
+            <div class="barcode-wrap">
+              <div class="barcode" id="barcode">*0000000*</div>
+              <div class="barcode-num" id="barcode-num">0000000</div>
+            </div>
+            <div class="issue-exp">
+              <span class="issue-exp-title" id="issue-exp-title">ISSUE-EXP</span><br />
+              <span class="issue-exp-content" id="issue-date">MM/YYYY</span><br />
+              <span class="issue-exp-content" id="exp-date">MM/YYYY</span>
+            </div>
+          </div>
+          <div class="info">
+            <div class="fullname">
+              <span class="info-title" id="name-title">FULL NAME</span><br />
+              <span class="info-content" id="full-name">?</span>
+            </div>
+            <div class="department">
+              <span class="info-title" id="department-title">DEPARTMENT</span><br />
+              <span class="info-content" id="department">?</span>
+            </div>
+            <div class="position">
+              <span class="info-title" id="position-title">POSITION</span><br />
+              <span class="info-content" id="position">?</span>
+            </div>
+            <div class="facility">
+              <span class="info-title" id="facility-title">FACILITY</span><br />
+              <span class="info-content" id="facility">?</span>
+            </div>
+          </div>
         </div>
-        <div class="data">
-          <div class="barcode-wrap">
-            <div class="barcode" id="barcode">*0000000*</div>
-            <div class="barcode-num" id="barcode-num">0000000</div>
-          </div>
-          <div class="issue-exp">
-            <span class="issue-exp-title" id="issue-exp-title">ISSUE-EXP</span><br />
-            <span class="issue-exp-content" id="issue-date">MM/YYYY</span><br />
-            <span class="issue-exp-content" id="exp-date">MM/YYYY</span>
-          </div>
-        </div>
-        <div class="info">
-          <div class="fullname">
-            <span class="info-title" id="name-title">FULL NAME</span><br />
-            <span class="info-content" id="full-name">?</span>
-          </div>
-          <div class="department">
-            <span class="info-title" id="department-title">DEPARTMENT</span><br />
-            <span class="info-content" id="department">?</span>
-          </div>
-          <div class="position">
-            <span class="info-title" id="position-title">POSITION</span><br />
-            <span class="info-content" id="position">?</span>
-          </div>
-          <div class="facility">
-            <span class="info-title" id="facility-title">FACILITY</span><br />
-            <span class="info-content" id="facility">?</span>
-          </div>
-        </div>
+      </div>
+
+      <div class="button-area" id="button-area-2">
+
+        <button id="export-png" onclick="captureAsPng('#preview')">📸 导出 PNG</button>
+        <button id="export-svg" onclick="captureAsSvg('#preview')">💾 导出 SVG</button>
+
       </div>
 
     </div>
@@ -1137,18 +1266,29 @@
           "hint-input-id": "证件编号：",
           "hint-input-issue": "发证日期（年月）：",
           "hint-input-exp": "到期日期（年月）：",
-          "hint-input-bg": "图片背景渐变样式：",
-          "hint-bg-color": "图片背景颜色(纯色)：",
-          "hint-input-photo": "上传图片：",
+          "hint-input-bg": "证件照背景渐变样式：",
+          "hint-bg-color": "证件照背景颜色(纯色)：",
+          "hint-input-photo": "上传证件照图片：",
           "hint-input-logo": "上传自定义logo：",
           "hint-opacity-slider": "logo不透明度：",
-          "hint-width-slider": "预览宽度：",
+          "hint-card-bg-color": "卡片背景颜色：",
+          "hint-main-text-color": "主要文字颜色：",
+          "hint-aux-text-color": "次要文字颜色：",
+          "hint-level0-color": "0级权限颜色：",
+          "hint-level1-color": "1级权限颜色：",
+          "hint-level2-color": "2级权限颜色：",
+          "hint-level3-color": "3级权限颜色：",
+          "hint-level4-color": "4级权限颜色：",
+          "hint-level5-color": "5级权限颜色：",
+          "hint-five-colors": "单独设置从上至下的每个色条颜色：",
+          "hint-width-slider": "导出图片宽度：",
           "hint-name-nowrap": "禁止换行",
           "hint-department-nowrap": "禁止换行",
           "hint-position-nowrap": "禁止换行",
           "hint-facility-nowrap": "禁止换行",
           "hint-process": "图片不会上传至云端，仅在您的浏览器中本地合成。",
-          "hint-width": "这也会改变导出图片的大小，而最终图片还会比这个略宽一些。",
+          "hint-width": "最终导出的图片会比指定值略大一些。",
+          "hint-bug": "如果遇到字体显示异常的问题，请略微调整此宽度，然后重试。",
         },
         textareas: {
           "input-issue": "YYYY/MM",
@@ -1190,6 +1330,7 @@
           "trans": "跨性别",
         },
         buttons: {
+          "collapsible": "高级选项",
           "update": "✅ 生成预览",
           "export-png": "📸 导出 PNG",
           "export-svg": "💾 导出 SVG",
@@ -1225,16 +1366,27 @@
           "hint-input-exp": "Card Expiry Time:",
           "hint-input-bg": "Photo Background Gradient:",
           "hint-bg-color": "Photo Background Color:",
-          "hint-input-photo": "Upload Photo:",
+          "hint-input-photo": "Upload Portrait Photo:",
           "hint-input-logo": "Upload Custom Logo:",
           "hint-opacity-slider": "Logo Opacity:",
-          "hint-width-slider": "Preview Width:",
+          "hint-card-bg-color": "Card Background Color:",
+          "hint-main-text-color": "Main Text Color:",
+          "hint-aux-text-color": "Auxiliary Text Color:",
+          "hint-level0-color": "Bar Color of Level 0:",
+          "hint-level1-color": "Bar Color of Level 1:",
+          "hint-level2-color": "Bar Color of Level 2:",
+          "hint-level3-color": "Bar Color of Level 3:",
+          "hint-level4-color": "Bar Color of Level 4:",
+          "hint-level5-color": "Bar Color of Level 5:",
+          "hint-five-colors": "Set colors for each bar, top to bottom:",
+          "hint-width-slider": "Final Output Width:",
           "hint-name-nowrap": "No Wrap",
           "hint-department-nowrap": "No Wrap",
           "hint-position-nowrap": "No Wrap",
           "hint-facility-nowrap": "No Wrap",
           "hint-process": "The images won't be uploaded to the web. They will only be local-processed in your browser.",
-          "hint-width": "This will also change the size of the exported image. The final image will be slightly larger than this value.",
+          "hint-width": "The final image will be slightly larger than this value.",
+          "hint-bug": "If the text appears broken, please make a slight adjustment to this value and try again.",
         },
         textareas: {
           "input-issue": "MM/YYYY",
@@ -1276,6 +1428,7 @@
           "trans": "Transgender",
         },
         buttons: {
+          "collapsible": "Advanced Options",
           "update": "✅ Generate Preview",
           "export-png": "📸 Export as PNG",
           "export-svg": "💾 Export as SVG",
@@ -1303,7 +1456,7 @@
           "hint-input-name": "Plena Nomo:",
           "hint-input-department": "Fako (Departemento de Ofico):",
           "hint-input-position": "Ofico de Okupo:",
-          "hint-input-facility": "institucio de Servo:",
+          "hint-input-facility": "Institucio de Servo:",
           "hint-input-level-char": "Nivelo de Personara Klasado:",
           "hint-input-level-num": "Nivelo de Sekureca Permeso:",
           "hint-input-id": "Seria Numero:",
@@ -1311,16 +1464,27 @@
           "hint-input-exp": "Eksvalida Tempo de la Karto:",
           "hint-input-bg": "Fona Kolortransiro de la Foto:",
           "hint-bg-color": "Fona Koloro de la Foto:",
-          "hint-input-photo": "Alŝuti Foton:",
+          "hint-input-photo": "Alŝuti Portretan Foton:",
           "hint-input-logo": "Alŝuti Propran Emblemo:",
           "hint-opacity-slider": "Videbleco de la Emblemo:",
-          "hint-width-slider": "Larĝo de Antaŭrigardo:",
+          "hint-card-bg-color": " Fona Koloro de Karto: ",
+          "hint-main-text-color": "Baza Teksa Koloro:",
+          "hint-aux-text-color": "Akcesora Teksa Koloro:",
+          "hint-level0-color": "Nivelo-0 Stanga Koloro:",
+          "hint-level1-color": "Nivelo-1 Stanga Koloro:",
+          "hint-level2-color": "Nivelo-2 Stanga Koloro:",
+          "hint-level3-color": "Nivelo-3 Stanga Koloro:",
+          "hint-level4-color": "Nivelo-4 Stanga Koloro:",
+          "hint-level5-color": "Nivelo-5 Stanga Koloro:",
+          "hint-five-colors": "Agordi koloroj por ĉiu stango, supre al sube:",
+          "hint-width-slider": "Larĝo de Eksportota Bildo:",
           "hint-name-nowrap": "Sen-linifaldo",
           "hint-department-nowrap": "Sen-linifaldo",
           "hint-position-nowrap": "Sen-linifaldo",
           "hint-facility-nowrap": "Sen-linifaldo",
           "hint-process": "La bildoj ne estos alŝutitaj rete. Ili nur estos traktitaj en via retumilo.",
-          "hint-width": "Ĉi tio ankaŭ ŝanĝos la larĝon de via eksportita bildo. La fina bildo estos iomete pli larĝa ol ĉi tiu valoro.",
+          "hint-width": "La fina eksportota bildo estos iomete pli larĝa ol ĉi tiu valoro.",
+          "hint-bug": "Se la tekstoj ŝajnas rompitaj, bonvole iomete ŝanĝu ĉi tiun valoron kaj reprovi poste.",
         },
         textareas: {
           "input-issue": "MM/YYYY",
@@ -1362,6 +1526,7 @@
           "trans": "Transgenra",
         },
         buttons: {
+          "collapsible": "Altnivelaj Agordoj",
           "update": "✅ Generi Antaŭrigardon",
           "export-png": "📸 Eksporti PNG",
           "export-svg": "💾 Eksporti SVG",
@@ -1393,20 +1558,31 @@
           "hint-input-level-char": "職員の分類：",
           "hint-input-level-num": "セキュリティクリアランスレベル：",
           "hint-input-id": "カード番号：",
-          "hint-input-issue": "発行日（年/月）:",
-          "hint-input-exp": "有効期限（年月）",
-          "hint-input-bg": "画像の背景のグラデーション:",
-          "hint-bg-color": "画像の背景色（単色）：",
-          "hint-input-photo": "画像アップロード：",
+          "hint-input-issue": "発行日（年/月）：",
+          "hint-input-exp": "有効期限（年月）：",
+          "hint-input-bg": "証明写真の背景のグラデーション：",
+          "hint-bg-color": "証明写真の背景色（単色）：",
+          "hint-input-photo": "証明写真アップロード：",
           "hint-input-logo": "カスタムロゴアップロード：",
           "hint-opacity-slider": "ロゴの不透明度：",
-          "hint-width-slider": "プレビュー幅：",
+          "hint-card-bg-color": "カード背景色：",
+          "hint-main-text-color": "メイン文字色：",
+          "hint-aux-text-color": "サブ文字色：",
+          "hint-level0-color": "レベル0権限カラー：",
+          "hint-level1-color": "レベル1権限カラー：",
+          "hint-level2-color": "レベル2権限カラー：",
+          "hint-level3-color": "レベル3権限カラー：",
+          "hint-level4-color": "レベル4権限カラー：",
+          "hint-level5-color": "レベル5権限カラー：",
+          "hint-five-colors": "各カラーバーの色を上から下に個別に設定します：",
+          "hint-width-slider": "エクスポート画像の幅：",
           "hint-name-nowrap": "改行を防ぐ",
           "hint-department-nowrap": "改行を防ぐ",
           "hint-position-nowrap": "改行を防ぐ",
           "hint-facility-nowrap": "改行を防ぐ",
           "hint-process": "画像はオンラインにアップロードせず、ブラウザ内だけで処理されます。",
-          "hint-width": "エクスポートされた画像のサイズも変更されます。実際の画像は指定サイズより少し大きくなる場合があります。",
+          "hint-width": "実際の画像は指定サイズより少し大きくなる場合があります。",
+          "hint-bug": "テキストの表示がおかしい場合、この値を微調整して再度お試しください。",
         },
         textareas: {
           "input-issue": "YYYY/MM",
@@ -1448,6 +1624,7 @@
           "trans": "Transgender トランスジェンダー",
         },
         buttons: {
+          "collapsible": "詳細オプション",
           "update": "✅ プレビューを生成",
           "export-png": "📸 PNG エクスポート",
           "export-svg": "💾 SVG エクスポート",
@@ -1470,26 +1647,29 @@
 
     function changeLanguage(lang) {
 
+      // Reduce the gap between info fields for Chinese and Japanese to preserve the layout.
+      const infoSection = document.querySelector('.id-card-vertical .info');
+      if (infoSection) {
+        if (lang === 'cn' || lang === 'jp') {
+          infoSection.style.gap = 'calc(var(--v-id-card-width)* 0.01)';
+        } else {
+          infoSection.style.gap = 'calc(var(--v-id-card-width)* 0.022)';
+        }
+      }
+
       const groups = ["links", "fields", "labels", "textareas", "options", "buttons", "optgroups"];
 
       for (const group of groups) {
-
         if (!translations[lang][group]) continue;
-
         for (const [key, text] of Object.entries(translations[lang][group])) {
-
           let element = null;
 
           // Start to browse through the language data array; try to find elements with exact ids same as the array keys, then replace their contents.
-
           if (group === "links") {
-
             console.log(`Group: ${group}, Key: ${key}, Text: ${text}, Element:`, element);
-
             element = document.getElementById(key);
 
             // Change href for <a>.
-
             if (element) element.href = text;
             if (!element) {
               console.warn(`Element not found for group "${group}", key "${key}"`);
@@ -1497,39 +1677,30 @@
           }
 
           else if (group === "textareas") {
-
             console.log(`Group: ${group}, Key: ${key}, Text: ${text}, Element:`, element);
-
             element = document.getElementById(key);
 
             // Change placeholder text for <input>.
-
             if (element) element.placeholder = text;
             if (!element) {
               console.warn(`Element not found for group "${group}", key "${key}"`);
             }
           }
           else if (group === "optgroups") {
-
             console.log(`Group: ${group}, Key: ${key}, Text: ${text}, Element:`, element);
-
             element = document.getElementById(key);
 
             // Change label text for <optgroup>.
-
             if (element) element.label = text;
             if (!element) {
               console.warn(`Element not found for group "${group}", key "${key}"`);
             }
           }
           else {
-
             console.log(`Group: ${group}, Key: ${key}, Text: ${text}, Element:`, element);
-
             element = document.getElementById(key);
 
             // Otherwise, change only text content for <label>, <span>, and possibly <div>.
-
             if (element) element.textContent = text;
             if (!element) {
               console.warn(`Element not found for group "${group}", key "${key}"`);
@@ -1582,6 +1753,23 @@
   </script>
 
 
+  <script id="collapsible-config">
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function () {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.display === "block") {
+          content.style.display = "none";
+        } else {
+          content.style.display = "block";
+        }
+      });
+    }
+  </script>
+
 
   <script id="slider-config">
 
@@ -1602,7 +1790,6 @@
     // Update CSS variable when the slider is dragged.
 
     widthSlider.addEventListener('input', function () {
-      root.style.setProperty('--v-id-card-width', this.value + 'px');
       widthInput.value = this.value;
     });
 
@@ -1615,7 +1802,6 @@
 
     widthInput.addEventListener('input', function () {
       const value = Math.min(Math.max(this.value, 1), 5000);
-      root.style.setProperty('--v-id-card-width', value + 'px');
       widthSlider.value = value;
     });
 
@@ -1651,6 +1837,23 @@
 
 
   <script id="preview-generation">
+
+    const cardBgColor = document.getElementById("card-bg-color");
+    const mainTextColor = document.getElementById("main-text-color");
+    const auxTextColor = document.getElementById("aux-text-color");
+
+    const level0Color = document.getElementById("level0-color");
+    const level1Color = document.getElementById("level1-color");
+    const level2Color = document.getElementById("level2-color");
+    const level3Color = document.getElementById("level3-color");
+    const level4Color = document.getElementById("level4-color");
+    const level5Color = document.getElementById("level5-color");
+
+    const firstColor = document.getElementById("first-color");
+    const secondColor = document.getElementById("second-color");
+    const thirdColor = document.getElementById("third-color");
+    const fourthColor = document.getElementById("fourth-color");
+    const fifthColor = document.getElementById("fifth-color");
 
     // Preview Generation script (per "Generate" button click)
 
@@ -1711,6 +1914,33 @@
       document.getElementById("portrait").style.backgroundImage = document.getElementById("input-bg").value;
       document.getElementById("portrait").style.backgroundColor = document.getElementById('bg-color').value;
 
+      // Other color settings
+
+
+
+      root.style.setProperty('--v-id-card-bg-color', cardBgColor.value);
+      root.style.setProperty('--v-id-card-text-color', mainTextColor.value);
+      root.style.setProperty('--v-id-card-secondary-color', auxTextColor.value);
+
+      root.style.setProperty('--v-id-card-level0-color', level0Color.value);
+      root.style.setProperty('--v-id-card-level1-color', level1Color.value);
+      root.style.setProperty('--v-id-card-level2-color', level2Color.value);
+      root.style.setProperty('--v-id-card-level3-color', level3Color.value);
+      root.style.setProperty('--v-id-card-level4-color', level4Color.value);
+      root.style.setProperty('--v-id-card-level5-color', level5Color.value);
+
+      if (document.getElementById('individual-bar-color').checked) {
+        document.querySelector('.id-card-vertical .level-bar:nth-child(1)').style.backgroundColor = firstColor.value;
+        document.querySelector('.id-card-vertical .level-bar:nth-child(2)').style.backgroundColor = secondColor.value;
+        document.querySelector('.id-card-vertical .level-bar:nth-child(3)').style.backgroundColor = thirdColor.value;
+        document.querySelector('.id-card-vertical .level-bar:nth-child(4)').style.backgroundColor = fourthColor.value;
+        document.querySelector('.id-card-vertical .level-bar:nth-child(5)').style.backgroundColor = fifthColor.value;
+      } else {
+        document.querySelectorAll('.id-card-vertical .level-bar').forEach(bar => {
+          bar.style.backgroundColor = '';
+        });
+      }
+
       // Show portrait image
 
       const file = document.getElementById("input-photo").files[0];
@@ -1746,7 +1976,6 @@
     // Clear all inputs, injected styles and files (per "Reset" button click)
 
     function resetAll() {
-      root.style.setProperty('--v-id-card-width', 'calc(150px + 15vw)'); // Reset preview width
 
       document.getElementById("portrait").style.backgroundImage = "none";  // Reset background gradient to none
       document.getElementById("portrait").style.backgroundColor = "#ffffff";  // Reset background color to white
@@ -1773,11 +2002,33 @@
           el.value = 'none'; // Reset the dropdown menu
         }
 
+        else if (el.type === 'text' || el.tagName === 'TEXTAREA') {
+          el.value = ''; // Clear all texts and textareas
+        }
+
         else {
-          el.value = ''; // Clear all texts
+          return;
         }
 
       });
+
+      // Reset logo opacity slider
+      opacitySlider.value = 8;
+      opacityInput.value = opacitySlider.value;
+
+      // Reset logo opacity
+      root.style.setProperty('--v-id-card-logo-opacity', opacitySlider.value / 100);
+
+      // Reset basic colors
+      cardBgColor.value = '#ffffff';
+      mainTextColor.value = '#000000';
+      auxTextColor.value = '#afafaf';
+      level0Color.value = '#e6e6e6';
+      level1Color.value = '#3ad637';
+      level2Color.value = '#3294ff';
+      level3Color.value = '#ffc826';
+      level4Color.value = '#ff8326';
+      level5Color.value = '#ff2600';
     }
   </script>
 
@@ -1786,7 +2037,8 @@
 
   <!-- Capture image from DIV via snapDOM -->
 
-  <script src="https://unpkg.com/@zumer/snapdom@latest/dist/snapdom.min.js"></script>
+  <script src="snapdom-latest.js"></script>
+
 
   <script id="download-png">
     // Download PNG script (per "Export as PNG" button click)
@@ -1801,7 +2053,12 @@
         // Wait for the fonts to load
         await document.fonts.ready;
 
-        const result = await snapdom(el, { scale: 1 });
+        const width = widthSlider ? Number(widthSlider.value) : 1000;
+
+        console.log("Output Width: " + width);
+
+        // Generate PNG at the defined width
+        const result = await snapdom(el, { width: width, embedFonts: true });
         const img = await result.toPng();
 
         document.body.appendChild(img);
@@ -1832,24 +2089,23 @@
         await document.fonts.ready;
 
         // Get Blob
-        const blob = await snapdom.toBlob(el);
+        const blob = await snapdom.download(el, { format: "svg", filename: "scp-id-card.svg", embedFonts: true });
 
         // Write the Blob object into a link, triggering download
-
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "scp-id-card.svg";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
       }
       catch (error) {
         console.error("Fail to export SVG.", error);
       }
     }
 
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        await preCache({ embedFonts: true });
+        console.log('preCache loaded');
+      } catch (error) {
+        console.error('Error en preCache:', error);
+      }
+    });
   </script>
 
 </body>
