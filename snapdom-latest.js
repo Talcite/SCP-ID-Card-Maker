@@ -4,6 +4,7 @@
 * v.1.7.1
 * Author Juan Martin Muda
 * License MIT
+* Original: https://github.com/zumerlab/snapdom
 **/
 
 (() => {
