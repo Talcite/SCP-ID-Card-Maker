@@ -1,5 +1,5 @@
 # 🪪 Intro
-A small generator to make custom ID card pictures, originally being a component on the SCP Wiki.
+A small generator to make custom ID card pictures, originally being a [component](https://scp-wiki.wikidot.com/component:v-id-card) on the SCP Wiki.
 
 ## 💾 Source
 
@@ -11,4 +11,4 @@ It supports English, Simplified Chinese, Japanese, and Esperanto.
 
 ## 👾 Live Demo
 
-A live demo can be found at: https://codepen.io/Talcite/pen/raVqywq
+A live demo can be found at [CodePen](https://codepen.io/Talcite/full/raVqywq).
