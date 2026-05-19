@@ -162,8 +162,8 @@
     }
 
     input#individual-bar-color {
-      width: 2em;
-      height: 2em;
+      width: 1.5em;
+      height: 1.5em;
     }
 
     #hint-width,
@@ -192,7 +192,7 @@
       align-self: center;
     }
 
-    @media only screen and (max-width: 600px) {
+    @media only screen and (max-width: 700px) {
 
       #content-wrap {
         flex-direction: column;
@@ -371,6 +371,7 @@
       /* Barcode cannot display properly on higher font weights */
       margin-left: -0.38em;
       transform: scaleX(1.2);
+      overflow: hidden;
     }
 
     .id-card-vertical .barcode-num {
@@ -919,20 +920,29 @@
 
 
         <div id="numeric-area">
-          <div class="small-area">
-            <label for="input-id" id="hint-input-id">编号：</label>
-            <input type="text" id="input-id" placeholder="XXXXXXX" />
+
+          <div style="display: flex;
+                      flex-wrap: wrap;
+                      align-items: center;
+                      margin-bottom: 15px;">
+            <div class="small-area" style="margin-right: 10px;">
+              <label for="input-id" id="hint-input-id">编号：</label>
+              <input type="text" id="input-id" placeholder="XXXXXXX" />
+            </div>
+
+            <div class="checkbox-wrap">
+              <input type="checkbox" id="barcode-crop">
+              <label for="barcode-crop" id="hint-barcode-crop">限制条形码高度</label>
+            </div>
           </div>
-
-
           <div class="small-area">
-            <label for="input-issue" id="hint-input-issue">发证日期（年月)：</label>
+            <label for="input-issue" id="hint-input-issue">发证日期（年月）：</label>
             <input type="text" id="input-issue" placeholder="YYYY/MM" />
           </div>
 
 
           <div class="small-area">
-            <label for="input-exp" id="hint-input-exp">到期日期（年月)：</label>
+            <label for="input-exp" id="hint-input-exp">到期日期（年月）：</label>
             <input type="text" id="input-exp" placeholder="YYYY/MM" />
           </div>
         </div>
@@ -1263,6 +1273,7 @@
           "hint-input-level-char": "人员等级：",
           "hint-input-level-num": "安保权限等级：",
           "hint-input-id": "证件编号：",
+          "hint-barcode-crop": "限制条形码高度",
           "hint-input-issue": "发证日期（年月）：",
           "hint-input-exp": "到期日期（年月）：",
           "hint-input-bg": "证件照背景渐变样式：",
@@ -1361,6 +1372,7 @@
           "hint-input-level-char": "Personnel Classification Level:",
           "hint-input-level-num": "Security Clearance Level:",
           "hint-input-id": "Serial Number:",
+          "hint-barcode-crop": "Restrict Barcode Height",
           "hint-input-issue": "Card Issue Time:",
           "hint-input-exp": "Card Expiry Time:",
           "hint-input-bg": "Photo Background Gradient:",
@@ -1459,6 +1471,7 @@
           "hint-input-level-char": "Nivelo de Personara Klasado:",
           "hint-input-level-num": "Nivelo de Sekureca Permeso:",
           "hint-input-id": "Seria Numero:",
+          "hint-barcode-crop": "Limigi Altecon de la Strikodo",
           "hint-input-issue": "Donita Tempo de la Karto:",
           "hint-input-exp": "Eksvalida Tempo de la Karto:",
           "hint-input-bg": "Fona Kolortransiro de la Foto:",
@@ -1557,6 +1570,7 @@
           "hint-input-level-char": "職員の分類：",
           "hint-input-level-num": "セキュリティクリアランスレベル：",
           "hint-input-id": "カード番号：",
+          "hint-barcode-crop": "バーコードの高さを制限する",
           "hint-input-issue": "発行日（年/月）：",
           "hint-input-exp": "有効期限（年月）：",
           "hint-input-bg": "証明写真の背景のグラデーション：",
@@ -1899,9 +1913,17 @@
       const levelBars = document.getElementById("level-bars");
       levelBars.className = "level-bar-container level-" + levelNum;
 
+      // Construct the barcode
+
       const id = document.getElementById("input-id").value;
       document.getElementById("barcode").textContent = "*" + id + "*";
       document.getElementById("barcode-num").textContent = id;
+
+      if (document.getElementById('barcode-crop').checked) {
+        document.getElementById("barcode").style.maxHeight = 'calc(var(--v-id-card-width) * 0.71)';
+      } else {
+        document.getElementById("barcode").style.maxHeight = 'fit-content';
+      }
 
       // Issue & Expiry date
 
